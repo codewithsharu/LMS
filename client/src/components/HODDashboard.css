@@ -1,0 +1,107 @@
+/* General container styling */
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Dashboard title styling */
+  .dashboard-title {
+    text-align: center;
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  /* No applications message styling */
+  .no-applications {
+    text-align: center;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  /* Table styling */
+  .applications-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .applications-table th,
+  .applications-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .applications-table th {
+    background-color: #007BFF;
+    color: #fff;
+  }
+  
+  .applications-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .applications-table td {
+    font-size: 14px;
+  }
+  
+  /* Status container styling */
+  .status-container {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  /* Textarea for rejection message */
+  .message-textarea {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  /* Button styles */
+  .approve-btn, .reject-btn {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .approve-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .reject-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .approve-btn:hover {
+    background-color: #218838;
+  }
+  
+  .reject-btn:hover {
+    background-color: #c82333;
+  }
+  
+  /* No action needed message */
+  .no-action-needed {
+    font-size: 12px;
+    color: #777;
+    text-align: center;
+  }
+  

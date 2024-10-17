@@ -1,0 +1,182 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Disallow:
+
+
+            <option value="CSE">CSE</option>
+            <option value="CSM">CSM</option>
+            <option value="CSD">CSD</option>
+            <option value="IT">IT</option>
+            <option value="ECE">ECE</option>
+            <option value="EEE">EEE</option>
+            <option value="CIVIL">CIVIL</option>
+            <option value="MECH">MECH</option>
+            <option value="M-TECH">M-TECH</option>
+            <option value="MBA">MBA</option>
+            <option value="MCA">MCA</option>
+            <option value="DIPLOMA">DIPLOMA</option>
+
+
+
+
+
+            <option value="A50ME0NT01">KANCHARI KALIDAS</option>
+            <option value="A50ME0NT02">MENDA RAMINAIDU</option>
+            <option value="A50ME0NT03">DESULA ANANDA RAO</option>
+            <option value="A50ME0NT05">PANGA SATYANARAYANA</option>
+            <option value="A50ME0NT06">Y GANGADHARA RAO</option>
+            <option value="A50ME0NT07">G HARISHANKAR</option>
+            <option value="A50PD0NT01">S LAKSHMANA MURTHY</option>
+            <option value="A50PD0NT02">V MOTILAL</option>
+            <option value="A50PD0NT03">V ESWARA RAO</option>
+            <option value="A50PD0NT04">T MURALI MOHANA RAO</option>
+            <option value="A50PD0NT05">J TEJESWARI</option>
+            <option value="A5ACC0NT03">D PAVANI</option>
+            <option value="A5ACC0NT04">SRINIVASA RAO RUVVA</option>
+            <option value="A5ADM0NT01">SRINIVASA RAO P</option>
+            <option value="A5ADM0NT03">P CHANDRASEKARA RAO</option>
+            <option value="A5ADM0NT05">K APPA RAO</option>
+            <option value="A5ADM0NT06">M MALLESWARA RAO</option>
+            <option value="A5ADM0NT07">SATYA NARAYANA G</option>
+            <option value="A5ADM0NT08">SURYA RAO MALLA</option>
+            <option value="A5ADM0NT09">PADMANABH PANDA</option>
+            <option value="A5ADM0NT10">GANGU GOVINDA</option>
+            <option value="A5ADM0NT11">V VISHNU MURTHY RAJU</option>
+            <option value="A5ADM0NT12">T V S S MURALI KRISHNA</option>
+            <option value="A5ADM0NT14">MADHU SUDHANA RAO DOLA</option>
+            <option value="A5ADM0NT15">SRINU VADDITHANDRA</option>
+            <option value="A5ADM0NT16">DURGAPRASAD SANDAKA</option>
+            <option value="A5ADM0NT17">RAMANAYYA KANCHARI</option>
+            <option value="A5ADM0NT18">SALURU RAGHUKUMAR</option>
+            <option value="A5ADM0NT19">SREENIVASA RAO CH</option>
+            <option value="A5ADM0NT20">KAILASA RAO S</option>
+            <option value="A5ADM0NT21">P V MADHUSUDHAN</option>
+            <option value="A5ADM0NT22">VADIGI SYAMALA RAO</option>
+            <option value="A5ADM0NT24">RAHUL CHAUDHARY</option>
+            <option value="A5AS0NT02">Y RAMA KRISHNA</option>
+            <option value="A5AS0NT03">M NAGA VENKATA SATYANARAYANA</option>
+            <option value="A5AS0NT04">B RAMALINGESWARA RAO</option>
+            <option value="A5AS0NT06">D HARI PRASAD</option>
+            <option value="A5AS0NT07">NAGA PRASANNA KUMAR Y</option>
+            <option value="A5CH0NT02">RAMARAO K</option>
+            <option value="A5CH0NT04">A N V S SATYANARAYANA</option>
+            <option value="A5CH0NT05">J SWETHA</option>
+            <option value="A5CH0NT06">RAJASRI M</option>
+            <option value="A5CH0NT07">DR L S SESHAGIRI RAO</option>
+            <option value="A5CH0NT08">BULUSU PRASAD</option>
+            <option value="A5CH0NT09">T VEERRAJU</option>
+            <option value="A5CH0NT10">B KARUNAKAR</option>
+            <option value="A5CH0NT11">S SURENDRA KUMAR</option>
+            <option value="A5CH0NT12">G L PRAKASH</option>
+            <option value="A5CH0NT13">S NAGI REDDY</option>
+            <option value="A5CH0NT14">RAJU M</option>
+            <option value="A5CH0NT15">L CHANDRA MOHAN</option>
+            <option value="A5CH0NT16">U L N S SUDHAKARA RAO</option>
+            <option value="A5CH0NT17">A S VENU</option>
+            <option value="A5CH0NT18">P MADHU SUDHAN</option>
+            <option value="A5CH0NT19">N S S S VENKATA SUBRAHMANYAM</option>
+            <option value="A5CH0NT20">CHITTI BABU</option>
+            <option value="A5CH0NT21">P RAMYA</option>
+            <option value="A5CH0NT22">G SIVA PRASAD</option>
+            <option value="A5CH0NT23">P BHAVANI</option>
+            <option value="A5CH0NT24">V LAXMANA RAO</option>
+            <option value="A5CH0NT25">G VISALAKSHI</option>
+            <option value="A5CH0NT26">G RAJA MANI</option>
+            <option value="A5CH0NT27">D SURYA PRAKASH RAO</option>
+            <option value="A5CH0NT28">K VIJAYA KUMARI</option>
+            <option value="A5CH0NT29">T KANAKA RAJU</option>
+            <option value="A5CH0NT30">S KOTINADHAM</option>
+            <option value="A5CH0NT31">T MURALIKRISHNA</option>
+            <option value="A5CH0NT32">P GANESH</option>
+            <option value="A5CH0NT33">V UDAY KUMAR</option>
+            <option value="A5CH0NT34">B SUNEEL KUMAR</option>
+            <option value="A5CH0NT35">K RAMA CHANDRA RAO</option>
+            <option value="A5CH0NT36">N RAMESH</option>
+            <option value="A5CH0NT37">N SANDHYA RANI</option>
+            <option value="A5CH0NT38">D VENKATESWARA RAO</option>
+            <option value="A5CH0NT39">A SANYASI RAO</option>
+            <option value="A5CH0NT40">G SUDHA RANI</option>
+            <option value="A5CH0NT41">A VEERA VENKATA RAO</option>
+            <option value="A5CH0NT42">M G V S N VARMA</option>
+            <option value="A5CH0NT43">Y KONDALA RAO</option>
+            <option value="A5CH0NT44">M L N S BHASKAR</option>
+            <option value="A5CH0NT45">M RAMADEVI</option>
+            <option value="A5CH0NT46">V SUDHAKAR RAO</option>
+            <option value="A5CH0NT47">T VENKATESWARA RAO</option>
+            <option value="A5CH0NT48">P PRASADA RAO</option>
+            <option value="A5CH0NT49">S KOTESWARA RAO</option>
+            <option value="A5CH0NT50">A RAJESWARI</option>
+            <option value="A5CH0NT51">Y PANDU RANGA RAO</option>
+            <option value="A5CH0NT52">Y GANGARAJU</option>
+            <option value="A5CH0NT53">B MADHUSUDHANA RAO</option>
+            <option value="A5CH0NT54">T RAMESH</option>
+            <option value="A5CH0NT55">P V P ANAND</option>
+            <option value="A5CH0NT56">C VEERRAJU</option>
+            <option value="A5CH0NT57">P KAMESWARI</option>
+            <option value="A5CH0NT58">J BHASKARA RAO</option>
+            <option value="A5CH0NT59">M GOPALAKRISHNA</option>
+            <option value="A5CH0NT60">B RAMAKRISHNA</option>
+            <option value="A5CH0NT61">K V K BHASKARA RAO</option>
+            <option value="A5CH0NT62">R BHASKARA RAO</option>
+            <option value="A5CH0NT63">P SATYANARAYANA</option>
+            <option value="A5CH0NT64">P RAMESH BABU</option>
+            <option value="A5CH0NT65">S RAM MOHAN RAO</option>
+            <option value="A5CH0NT66">G VENKATA RAO</option>
+            <option value="A5CH0NT67">T RAJESWARA RAO</option>
+            <option value="A5CH0NT68">K V RAMANA</option>
+            <option value="A5CH0NT69">V A SATYA RAO</option>
+            <option value="A5CH0NT70">Y RAMESH BABU</option>
+            <option value="A5CH0NT71">P SATYANARAYANA</option>
+            <option value="A5CH0NT72">V S NARAYAN</option>
+            <option value="A5CH0NT73">T RAMAKRISHNA</option>
+            <option value="A5CH0NT74">P BHAVANI</option>
+            <option value="A5CH0NT75">D RAJESH BABU</option>
+            <option value="A5CH0NT76">A VENKATA PRASAD</option>
+            <option value="A5CH0NT77">Y SURYA RAO</option>
+            <option value="A5CH0NT78">T T VENKATA RAMANA</option>
+            <option value="A5CH0NT79">G SUBBARAO</option>
+            <option value="A5CH0NT80">P S NARASIMHA RAO</option>
+
+
+
+
+
+
+
+
+             <div className="form-group">
+          <label>
+            Designation:
+            <select
+              name="designation"
+              value={formData.designation}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="">Select</option>
+              <option value="Teaching">Principal</option>
+              <option value="Teaching">Director</option>
+              <option value="Teaching">Dean</option>
+              <option value="Teaching">Associate Dean</option>
+              <option value="Teaching">HOD</option>
+              <option value="Teaching">Asst.HOD</option>
+              <option value="Teaching">Professor</option>
+              <option value="Teaching">Teacher</option>
+            </select>
+          </label>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        

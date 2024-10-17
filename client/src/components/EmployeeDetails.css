@@ -1,0 +1,146 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+  }
+  
+  h1, h2, h3, h4 {
+    margin: 0;
+    padding: 0;
+  }
+  
+  .employee-details-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+  
+  .search-form {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .empid-input {
+    padding: 10px;
+    font-size: 1rem;
+    width: 200px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .search-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .search-button:hover {
+    background-color: #0056b3;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .employee-info {
+    text-align: center;
+  }
+  
+  .leave-summary {
+    margin-top: 40px;
+  }
+  
+  .leave-section {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+  }
+  
+  .leave-detail {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 8px;
+    width: 30%;
+    text-align: center;
+  }
+  
+  .leave-detail h4 {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  .leave-detail p {
+    font-size: 1.5rem;
+    color: #007bff;
+  }
+  
+  .monthly-leaves {
+    margin-top: 40px;
+  }
+  
+  .monthly-leaves-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+  }
+  
+  .monthly-leave {
+    background-color: #f1f1f1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+  
+  .monthly-leave p {
+    font-size: 1.2rem;
+    color: #333;
+  }
+  
+  @media (max-width: 768px) {
+    .search-form {
+      flex-direction: column;
+    }
+  
+    .empid-input {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .search-button {
+      width: 100%;
+    }
+  
+    .leave-section {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .leave-detail {
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  
+    .monthly-leaves-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
