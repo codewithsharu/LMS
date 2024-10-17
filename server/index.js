@@ -338,6 +338,77 @@ app.get('/api/hod-applications', async (req, res) => {
       }
   });
   
+  app.post('/api/forward-leave/:employeeId', async (req, res) => {
+    const { employeeId } = req.params;
+    const { forwardedTo, forwardedBy } = req.body;
+  
+    try {
+      const updatedApplication = await Applied.findOneAndUpdate(
+        { employeeId },
+        {
+          $set: {
+            assignedTo: forwardedTo,        // Principal
+            forwardedTo,                    // Principal
+            forwardedBy                     // HOD
+          }
+        },
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedApplication) {
+        return res.status(404).json({ message: 'Application not found' });
+      }
+  
+      res.json(updatedApplication);
+    } catch (error) {
+      console.error('Error forwarding leave application:', error);
+      res.status(500).json({ message: 'Failed to forward application' });
+    }
+  });
+  
+
+// Route to get all applications assigned to Principal
+// Route to get all applications assigned to Principal
+app.get('/api/principal-applications', async (req, res) => {
+    try {
+      const applications = await Applied.find({ assignedTo: 'Principal' });
+      console.log(applications); // Log the fetched applications for debugging
+      res.json(applications);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+      res.status(500).send('Error fetching applications');
+    }
+  });
+  
+  // Route to reject leave application by Principal
+app.post('/api/reject-principal-leave/:employeeId', async (req, res) => {
+    const { employeeId } = req.params;
+    const { message } = req.body;
+
+    try {
+        // Update the status and message in the Applied model
+        const application = await Applied.findOneAndUpdate(
+            { employeeId },
+            {
+                $set: {
+                    "principalApproval.status": "Rejected",
+                    "principalApproval.message": message,
+                }
+            },
+            { new: true }
+        );
+
+        if (!application) {
+            return res.status(404).json({ error: 'Application not found' });
+        }
+
+        // Respond with the updated application
+        res.status(200).json(application);
+    } catch (error) {
+        console.error('Error rejecting leave application:', error);
+        res.status(500).json({ error: 'Failed to reject leave application' });
+    }
+});
 
 
 

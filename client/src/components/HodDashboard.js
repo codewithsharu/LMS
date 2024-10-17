@@ -21,6 +21,7 @@ const HODDashboard = () => {
     fetchApplications();
   }, []);
 
+  // Function to reject an application
   const handleReject = async (employeeId) => {
     if (!rejectionMessage) {
       alert('Please provide a message for rejection');
@@ -43,6 +44,7 @@ const HODDashboard = () => {
     }
   };
 
+  // Function to approve an application
   const handleApprove = async (employeeId) => {
     try {
       const response = await axios.post(`http://localhost:3007/approve-leave/${employeeId}`);
@@ -53,6 +55,23 @@ const HODDashboard = () => {
       ));
     } catch (error) {
       console.error('Failed to approve application:', error);
+    }
+  };
+
+  // Function to forward an application to the Principal
+  const handleForward = async (employeeId) => {
+    try {
+      const response = await axios.post(`http://localhost:3007/api/forward-leave/${employeeId}`, {
+        forwardedTo: 'Principal',
+        forwardedBy: 'HOD',
+      });
+
+      // Update the application state after forwarding
+      setApplications(applications.map(app => 
+        app.employeeId === employeeId ? response.data : app
+      ));
+    } catch (error) {
+      console.error('Failed to forward application:', error);
     }
   };
 
@@ -132,6 +151,15 @@ const HODDashboard = () => {
                         </>
                       )}
                     </>
+                  )}
+
+                  {application.hodApproval?.status === 'Rejected' && (
+                    <button
+                      className="forward-btn"
+                      onClick={() => handleForward(application.employeeId)}
+                    >
+                      Forward to Principal
+                    </button>
                   )}
                 </td>
               </tr>
