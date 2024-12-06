@@ -13,6 +13,9 @@ import EmployeeDetails from './components/EmployeeDetails';
 import HodDashboard from './components/HodDashboard';
 import PrincipalDashboard from './components/PrincipalDashboard';
 import DirectorDashboard from './components/DirectorDashboard';
+import Login from './components/Login';
+import AuthPage from './components/AuthPage';
+
 
 
 function App() {
@@ -20,6 +23,9 @@ function App() {
     <BrowserRouter>
       <CustomNavbar />
       <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/auth" element={<AuthPage />} />
+
         <Route path="/hod" element={<HodDashboard />} />
         <Route path="/principal" element={<PrincipalDashboard />} />
         <Route path="/director" element={<DirectorDashboard/>} />

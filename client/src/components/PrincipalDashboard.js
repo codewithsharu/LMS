@@ -49,6 +49,23 @@ const PrincipalDashboard = () => {
         // Add your logic for approving an application here
     };
 
+    // Function to forward an application to Director
+    const handleForward = async (employeeId) => {
+        try {
+            const response = await axios.post(`http://localhost:3007/api/forward-leave/${employeeId}`, {
+                forwardedTo: 'Director',
+                forwardedBy: 'Principal',
+            });
+
+            // Update the application state after forwarding
+            setApplications(applications.map(app =>
+                app.employeeId === employeeId ? response.data : app
+            ));
+        } catch (error) {
+            console.error('Failed to forward application:', error);
+        }
+    };
+
     return (
         <div className="dashboard-container">
             <h2 className="dashboard-title">Principal Dashboard</h2>
@@ -120,6 +137,15 @@ const PrincipalDashboard = () => {
                                                 </>
                                             )}
                                         </>
+                                    )}
+
+                                    {application.principalApproval.status === 'Rejected' && (
+                                        <button
+                                            className="forward-btn"
+                                            onClick={() => handleForward(application.employeeId)}
+                                        >
+                                            Forward to Director
+                                        </button>
                                     )}
                                 </td>
                             </tr>

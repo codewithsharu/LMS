@@ -8,7 +8,9 @@ const Employee = require('./models/employee');
 const NonTeaching = require('./models/NonTeaching'); 
 const Applied = require('./models/Applied');
 const ApprovedLeaves = require('./models/ApprovedLeaves');
+const Credentials = require('./models/Credentials');
 const app = express();
+const session = require('express-session');
 const PORT = process.env.PORT || 3007;
 require('dotenv').config();
 app.use(cors());
@@ -24,6 +26,110 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     })
     .catch(err => console.error("MongoDB connection error:", err));
 
+// Configure session middleware
+app.use(
+    session({
+      secret: 'your_secret_key', // Replace with a secure key
+      resave: false,
+      saveUninitialized: false,
+      cookie: { secure: false, maxAge: 1000 * 60 * 60 } // 1 hour
+    })
+  );
+
+
+// Default users for testing
+const defaultUsers = [
+    {
+      empId: '1',
+      password: '1',
+      role: 'Permanent',
+    },
+    {
+      empId: 'E002',
+      password: 'password456',
+      role: 'Contract',
+    },
+    {
+      empId: 'E003',
+      password: 'password789',
+      role: 'Intern',
+    },
+    {
+      empId: 'E004',
+      password: 'password101',
+      role: 'Principal',
+    },
+    {
+      empId: 'E005',
+      password: 'password202',
+      role: 'HOD',
+    },
+    {
+      empId: 'E006',
+      password: 'password303',
+      role: 'Dean',
+    }
+  ];
+  
+  // Login route
+  app.post('/login', async (req, res) => {
+    console.log("Reached login");
+  
+    const { empid, password } = req.body;
+  
+    try {
+      // Find user from the default data
+      const user = defaultUsers.find(u => u.empId === empid);
+  
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+  
+      // Validate password (no bcrypt in this case, directly compare)
+      if (password !== user.password) {
+        return res.status(401).json({ message: 'Invalid password' });
+      }
+  
+      // Set session variables based on user role
+      req.session.authenticated = true;
+      req.session.empid = empid;
+      req.session.role = user.role;
+  
+      // Role-specific session variables
+      req.session.isHOD = user.role === 'HOD';
+      req.session.isPrincipal = user.role === 'Principal';
+      req.session.isDirector = user.role === 'Director';
+      req.session.isUser = user.role === 'User';
+  
+      res.status(200).json({ message: 'Login successful', role: user.role });
+    } catch (error) {
+      console.error('Error during login:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
+// Middleware for role-based access
+const requireRole = (role) => (req, res, next) => {
+    if (req.session.authenticated && req.session.role === role) {
+        return next();
+    }
+    res.status(403).json({ message: 'Access denied' });
+};
+
+// Example API: Access restricted to HODs
+app.get('/hod/dashboard', requireRole('HOD'), (req, res) => {
+    res.json({ message: 'Welcome to the HOD dashboard' });
+});
+
+// Logout route
+app.post('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ message: 'Error logging out' });
+        }
+        res.status(200).json({ message: 'Logged out successfully' });
+    });
+});
 
 
 
@@ -411,6 +517,71 @@ app.post('/api/reject-principal-leave/:employeeId', async (req, res) => {
 });
 
 
+app.post('/api/forward-principal-leave/:employeeId', async (req, res) => {
+    const { employeeId } = req.params;
+    const { forwardedTo, forwardedBy } = req.body;
+
+    try {
+        const updatedApplication = await Applied.findOneAndUpdate(
+            { employeeId },
+            {
+                $set: {
+                    assignedTo: forwardedTo,  // Director
+                    forwardedTo,              // Director
+                    forwardedBy               // Principal
+                }
+            },
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedApplication) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+
+        res.json(updatedApplication);
+    } catch (error) {
+        console.error('Error forwarding leave application:', error);
+        res.status(500).json({ message: 'Failed to forward application' });
+    }
+});
+
+
+app.get('/api/director-applications', async (req, res) => {
+    try {
+        const applications = await Applied.find({ assignedTo: 'Director' });
+        res.json(applications);
+    } catch (error) {
+        console.error('Error fetching applications:', error);
+        res.status(500).send('Error fetching applications');
+    }
+});
+
+app.post('/api/reject-director-leave/:employeeId', async (req, res) => {
+    const { employeeId } = req.params;
+    const { message } = req.body;
+
+    try {
+        const application = await Applied.findOneAndUpdate(
+            { employeeId },
+            {
+                $set: {
+                    "directorApproval.status": "Rejected",
+                    "directorApproval.message": message
+                }
+            },
+            { new: true }
+        );
+
+        if (!application) {
+            return res.status(404).json({ error: 'Application not found' });
+        }
+
+        res.status(200).json(application);
+    } catch (error) {
+        console.error('Error rejecting leave application:', error);
+        res.status(500).json({ error: 'Failed to reject leave application' });
+    }
+});
 
 
 
