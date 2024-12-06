@@ -1,36 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom'; // Use useNavigate hook
 
 const AuthPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
-    // Retrieve state from location
-    const { empid, role } = location.state || {};
+    // Check if the session data exists
+    const empid = sessionStorage.getItem('empid');
+    const role = sessionStorage.getItem('role');
 
     if (!empid || !role) {
-      // If no user data is found, redirect to login
+      // If no session data, redirect to login page
       navigate('/login');
     } else {
-      // Set the user details for display
-      setUserDetails({
-        empid,
-        role,
-      });
+      // If session data exists, redirect based on role
+      if (role === 'hod') {
+        navigate('/hod'); // Redirect to HOD Dashboard
+      } else if (role === 'principal') {
+        navigate('/principal'); // Redirect to Principal Dashboard
+      } else if (role === 'director') {
+        navigate('/director'); // Redirect to Director Dashboard
+      } else {
+        navigate('/'); // Default redirect to Home
+      }
     }
-  }, [location, navigate]);
-
-  if (!userDetails) {
-    return <div>Loading...</div>;
-  }
+  }, [navigate]);
 
   return (
-    <div>
-      <h1>User Details</h1>
-      <p><strong>Employee ID:</strong> {userDetails.empid}</p>
-      <p><strong>Role:</strong> {userDetails.role}</p>
+    <div className="auth-page-container">
+      <h2>Authenticating...</h2>
+      <p>Checking your session data...</p>
     </div>
   );
 };

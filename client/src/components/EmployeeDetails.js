@@ -3,9 +3,10 @@ import axios from "axios";
 import "./EmployeeDetails.css"; // Link to your CSS file
 
 const EmployeeDetails = () => {
-  const [empid, setEmpid] = useState("");
   const [employee, setEmployee] = useState(null);
   const [error, setError] = useState("");
+
+  const empid = sessionStorage.getItem("empid");
 
   const fetchEmployeeDetails = async () => {
     try {
@@ -18,26 +19,17 @@ const EmployeeDetails = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
     if (empid) {
       fetchEmployeeDetails();
+    } else {
+      setError("No Employee ID found in session.");
     }
-  };
+  }, [empid]);
 
   return (
     <div className="employee-details-container">
       <h1 className="title">Employee Details</h1>
-      <form onSubmit={handleSubmit} className="search-form">
-        <input
-          type="text"
-          placeholder="Enter Employee ID"
-          value={empid}
-          onChange={(e) => setEmpid(e.target.value)}
-          className="empid-input"
-        />
-        <button type="submit" className="search-button">Get </button>
-      </form>
 
       {error && <p className="error-message">{error}</p>}
 

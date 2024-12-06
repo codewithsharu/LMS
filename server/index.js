@@ -40,13 +40,13 @@ app.use(
 // Default users for testing
 const defaultUsers = [
     {
-      empId: '1',
+      empId: 'A50ME0NT01',
       password: '1',
       role: 'Permanent',
     },
     {
-      empId: 'E002',
-      password: 'password456',
+      empId: '2',
+      password: '2',
       role: 'Contract',
     },
     {
@@ -95,11 +95,7 @@ const defaultUsers = [
       req.session.empid = empid;
       req.session.role = user.role;
   
-      // Role-specific session variables
-      req.session.isHOD = user.role === 'HOD';
-      req.session.isPrincipal = user.role === 'Principal';
-      req.session.isDirector = user.role === 'Director';
-      req.session.isUser = user.role === 'User';
+
   
       res.status(200).json({ message: 'Login successful', role: user.role });
     } catch (error) {
@@ -116,10 +112,6 @@ const requireRole = (role) => (req, res, next) => {
     res.status(403).json({ message: 'Access denied' });
 };
 
-// Example API: Access restricted to HODs
-app.get('/hod/dashboard', requireRole('HOD'), (req, res) => {
-    res.json({ message: 'Welcome to the HOD dashboard' });
-});
 
 // Logout route
 app.post('/logout', (req, res) => {

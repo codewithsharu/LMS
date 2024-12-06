@@ -1,34 +1,32 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Use useNavigate hook for navigation
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate instead of history
 
 const LoginPage = () => {
   const [empid, setEmpid] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [userData, setUserData] = useState(null); // Store the response data
+  const [userData, setUserData] = useState(null);
   const navigate = useNavigate(); // Initialize useNavigate hook
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // Send the login request to the backend
-      const response = await axios.post('http://localhost:3007/login', { empid, password });
+      const response = await axios.post('http://172.16.0.128:3007/login', { empid, password });
 
       if (response.status === 200) {
-        // Store empid and role in sessionStorage (you can use localStorage as well)
         sessionStorage.setItem('empid', empid);
-        sessionStorage.setItem('role', response.data.role); // Store role
-
-        // Set the user data in state to show it on the page
+        sessionStorage.setItem('role', response.data.role);
         setUserData(response.data);
+        // console.log(response.data);
 
-        // Redirect to /auth after successful login (you can comment this out if you don't want to navigate)
-        // navigate('/auth');
+        // After successful login, navigate to the session page
+        // navigate('/session');
+         // Redirect to the welcome page after login
+         navigate('/welcome');
       }
     } catch (err) {
-      // Handle login error and set error message
       const errorMessage = err.response?.data?.message || 'Login failed';
       setError(errorMessage);
     }
@@ -62,14 +60,6 @@ const LoginPage = () => {
       {error && (
         <div style={{ marginTop: '20px', color: 'red' }}>
           <p>{error}</p>
-        </div>
-      )}
-
-      {/* Display the user data in JSON format if login is successful */}
-      {userData && (
-        <div style={{ marginTop: '20px', color: 'green' }}>
-          <h3>Logged in as:</h3>
-          <pre>{JSON.stringify(userData, null, 2)}</pre> {/* Format the JSON */}
         </div>
       )}
     </div>
