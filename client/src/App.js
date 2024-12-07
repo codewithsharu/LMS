@@ -58,35 +58,48 @@ function App() {
     }
     return element;
   };
-
   return (
     <BrowserRouter>
-      {/* <CustomNavbar onLogout={handleLogout} /> */}
-      <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-        <Route path="/welcome" element={<WelcomePage />} />
-
-        <Route path="/auth" element={<AuthPage />} />
-        <Route path="/session" element={<SessionPage />} />
-
-        {/* Protected Routes (role-based routing) */}
-        <Route path="/hod" element={<ProtectedRoute element={<HodDashboard />} requiredRole="hod" />} />
-        <Route path="/principal" element={<ProtectedRoute element={<PrincipalDashboard />} requiredRole="principal" />} />
-        <Route path="/director" element={<ProtectedRoute element={<DirectorDashboard />} requiredRole="director" />} />
-
-        {/* Public Pages */}
-        <Route path="/" element={<Home />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/non-teaching" element={<NonTeaching />} />
-        <Route path="/casual-leave" element={<CasualLeaveForm />} />
-        <Route path="/od-leave" element={<ODLeaveForm />} />
-        <Route path="/hpcl-leave" element={<HPCLLeaveForm />} />
-        <Route path="/emp" element={<EmployeeDetails />} />
-      </Routes>
+      {/* Navbar remains at the top */}
+      <CustomNavbar onLogout={handleLogout} />
+  
+      {/* All pages are rendered below the Navbar */}
+      <div style={{ marginTop: "64px" }}> {/* Adjust margin/padding as needed */}
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="/welcome" element={<WelcomePage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/session" element={<SessionPage />} />
+  
+          {/* Protected Routes (role-based routing) */}
+          <Route
+            path="/hod"
+            element={<ProtectedRoute element={<HodDashboard />} requiredRole="hod" />}
+          />
+          <Route
+            path="/principal"
+            element={<ProtectedRoute element={<PrincipalDashboard />} requiredRole="principal" />}
+          />
+          <Route
+            path="/director"
+            element={<ProtectedRoute element={<DirectorDashboard />} requiredRole="director" />}
+          />
+  
+          {/* Public Pages */}
+          <Route path="/" element={<Home />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/non-teaching" element={<NonTeaching />} />
+          <Route path="/casual-leave" element={<CasualLeaveForm />} />
+          <Route path="/od-leave" element={<ODLeaveForm />} />
+          <Route path="/hpcl-leave" element={<HPCLLeaveForm />} />
+          <Route path="/emp" element={<EmployeeDetails />} />
+        </Routes>
+      </div>
     </BrowserRouter>
   );
+  
 }
 
 export default App;

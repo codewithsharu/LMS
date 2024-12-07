@@ -43,33 +43,46 @@ const defaultUsers = [
       empId: 'A50ME0NT01',
       password: '1',
       role: 'Permanent',
+      name: 'KANCHARI KALIDAS',
+      branch: 'Mechanical Engineering',
     },
     {
       empId: '2',
       password: '2',
       role: 'Contract',
+      name: 'Bob Smith',
+      branch: 'Civil Engineering',
     },
     {
       empId: 'E003',
       password: 'password789',
       role: 'Intern',
+      name: 'Charlie Brown',
+      branch: 'Computer Science',
     },
     {
       empId: 'E004',
       password: 'password101',
       role: 'Principal',
+      name: 'Diana Prince',
+      branch: 'Administration',
     },
     {
       empId: 'E005',
       password: 'password202',
       role: 'HOD',
+      name: 'Edward Norton',
+      branch: 'Electrical Engineering',
     },
     {
       empId: 'E006',
       password: 'password303',
       role: 'Dean',
+      name: 'Fiona Davis',
+      branch: 'Management',
     }
   ];
+  
   
   // Login route
   app.post('/login', async (req, res) => {
@@ -85,43 +98,55 @@ const defaultUsers = [
         return res.status(404).json({ message: 'User not found' });
       }
   
-      // Validate password (no bcrypt in this case, directly compare)
+      // Validate password
       if (password !== user.password) {
         return res.status(401).json({ message: 'Invalid password' });
       }
   
-      // Set session variables based on user role
+      // Set session variables based on user details
       req.session.authenticated = true;
       req.session.empid = empid;
       req.session.role = user.role;
+      req.session.name = user.name;
+      req.session.branch = user.branch;
   
-
-  
-      res.status(200).json({ message: 'Login successful', role: user.role });
+      // Include empId in the response
+      res.status(200).json({ 
+        message: 'Login successful', 
+        empId: user.empId, 
+        role: user.role, 
+        name: user.name, 
+        branch: user.branch 
+      });
     } catch (error) {
       console.error('Error during login:', error);
       res.status(500).json({ message: 'Internal server error' });
     }
   });
+  
 
-// Middleware for role-based access
-const requireRole = (role) => (req, res, next) => {
-    if (req.session.authenticated && req.session.role === role) {
-        return next();
-    }
-    res.status(403).json({ message: 'Access denied' });
-};
+// // Middleware for role-based access
+// const requireRole = (role) => (req, res, next) => {
+//     if (req.session.authenticated && req.session.role === role) {
+//         return next();
+//     }
+//     res.status(403).json({ message: 'Access denied' });
+// };
 
 
-// Logout route
+// Assuming you're using express for your backend
 app.post('/logout', (req, res) => {
-    req.session.destroy(err => {
-        if (err) {
-            return res.status(500).json({ message: 'Error logging out' });
-        }
-        res.status(200).json({ message: 'Logged out successfully' });
+    console.log('Logout request received');
+    // Perform logout actions (destroy session, etc.)
+    req.session.destroy((err) => {
+      if (err) {
+        console.error('Error destroying session:', err);
+        return res.status(500).json({ message: 'Error logging out' });
+      }
+      res.status(200).json({ message: 'Logged out successfully' });
     });
-});
+  });
+  
 
 
 

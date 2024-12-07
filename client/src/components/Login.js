@@ -1,64 +1,86 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // Use useNavigate hook for navigation
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const LoginPage = () => {
   const [empid, setEmpid] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [userData, setUserData] = useState(null);
-  const navigate = useNavigate(); // Initialize useNavigate hook
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError('');
+    setLoading(true);
 
     try {
-      const response = await axios.post('http://172.16.0.128:3007/login', { empid, password });
+      const response = await axios.post('http://localhost:3007/login', { empid, password });
 
       if (response.status === 200) {
-        sessionStorage.setItem('empid', empid);
-        sessionStorage.setItem('role', response.data.role);
-        setUserData(response.data);
-        // console.log(response.data);
+        const { empId, role, name, branch } = response.data;
 
-        // After successful login, navigate to the session page
-        // navigate('/session');
-         // Redirect to the welcome page after login
-         navigate('/welcome');
+        // Store user data in sessionStorage
+        sessionStorage.setItem('empid', empId);
+        sessionStorage.setItem('role', role);
+        sessionStorage.setItem('name', name);
+        sessionStorage.setItem('branch', branch);
+        sessionStorage.setItem('loggedIn', true);
+
+
+        // Redirect to the welcome page
+        navigate('/welcome');
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Login failed';
+      const errorMessage = err.response?.data?.message || 'An unexpected error occurred.';
       setError(errorMessage);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" style={{ padding: '20px', maxWidth: '400px', margin: '0 auto' }}>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
-        <div>
-          <label>Employee ID:</label>
+        <div style={{ marginBottom: '10px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Employee ID:</label>
           <input
             type="text"
             value={empid}
             onChange={(e) => setEmpid(e.target.value)}
             required
+            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <div>
-          <label>Password:</label>
+        <div style={{ marginBottom: '10px' }}>
+          <label style={{ display: 'block', marginBottom: '5px' }}>Password:</label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
+            style={{ width: '100%', padding: '8px' }}
           />
         </div>
-        <button type="submit">Login</button>
+        <button
+          type="submit"
+          style={{
+            padding: '10px 15px',
+            backgroundColor: '#007BFF',
+            color: '#FFF',
+            border: 'none',
+            cursor: 'pointer',
+            width: '100%',
+          }}
+          disabled={loading}
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
 
       {error && (
-        <div style={{ marginTop: '20px', color: 'red' }}>
+        <div style={{ marginTop: '20px', color: 'red', textAlign: 'center' }}>
           <p>{error}</p>
         </div>
       )}
