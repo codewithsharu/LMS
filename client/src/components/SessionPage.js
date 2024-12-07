@@ -6,6 +6,7 @@ const SessionPage = () => {
   const role = sessionStorage.getItem('role');
   const name = sessionStorage.getItem('name');
   const branch = sessionStorage.getItem('branch');
+  const employeeType = sessionStorage.getItem('employee_type'); // Retrieve employee_type
 
   // Display the session variables or a message if they're not set
   return (
@@ -39,6 +40,9 @@ const SessionPage = () => {
           </div>
           <div style={{ marginBottom: '15px' }}>
             <span style={{ color: '#D08770' }}>Branch:</span> {branch || 'Not set'}
+          </div>
+          <div style={{ marginBottom: '15px' }}>
+            <span style={{ color: '#B48EAD' }}>Employee Type:</span> {employeeType || 'Not set'}
           </div>
         </div>
       ) : (

@@ -1,23 +1,9 @@
 import React, { useState, useEffect } from "react";
 import "./NonTeaching.css";
 import jsPDF from "jspdf";
-import logo from './images/log.jpeg'; // Assuming you have the logo
+import { useNavigate } from 'react-router-dom'; // Using useNavigate for navigation
 
-const employeeData = {
-  "A50ME0NT01": { name: "KANCHARI KALIDAS", designation: "Technician", department: "CSE" },
-  "A50ME0NT02": { name: "MENDA RAMINAIDU", designation: "Attender", department: "ECE" },
-  "A50ME0NT03": { name: "DESULA ANANDA RAO", designation: "Technician", department: "Mechanical" },
-  "A50ME0NT05": { name: "PANGA SATYANARAYANA", designation: "Attender", department: "Civil" },
-  "A50ME0NT06": { name: "Y GANGADHARA RAO", designation: "Technician", department: "IT" },
-  "A50ME0NT07": { name: "G HARISHANKAR", designation: "Attender", department: "CSD" },
-  "A50PD0NT01": { name: "S LAKSHMANA MURTHY", designation: "Technician", department: "CSM" },
-  "A50PD0NT02": { name: "V MOTILAL", designation: "Technician", department: "ECE" },
-  "A50PD0NT03": { name: "V ESWARA RAO", designation: "Attender", department: "Civil" },
-  "A50PD0NT04": { name: "T MURALI MOHANA RAO", designation: "Technician", department: "Mechanical" },
-  "A50PD0NT05": { name: "J TEJESWARI", designation: "Attender", department: "CSE" },
-};
-
-function NonTeaching() {
+const NonTeaching = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: "",
@@ -33,21 +19,43 @@ function NonTeaching() {
     assignedTo: "",  // New field for "Apply To"
   });
 
+  const navigate = useNavigate(); // For redirecting to login page
+
+  // Check if the user is logged in
+  useEffect(() => {
+    const loggedIn = sessionStorage.getItem('loggedIn');
+    if (!loggedIn) {
+      // Redirect to login page if not logged in
+      navigate("/login");
+    } else {
+      // If logged in, populate the form using session data
+      const empId = sessionStorage.getItem('empid');
+      const role = sessionStorage.getItem('role');
+      const name = sessionStorage.getItem('name');
+      const branch = sessionStorage.getItem('branch');
+      
+      setFormData({
+        employeeId: empId,
+        name: name,
+        designation: role, // Role is used as designation
+        department: branch, // Branch is used as department
+        leaveDays: "",
+        leaveStartDate: "",
+        leaveEndDate: "",
+        leaveReasons: "",
+        leaveAddress: "",
+        mobileNumber: "",
+        assignedTo: "",  // Keep this empty initially
+      });
+    }
+  }, [navigate]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-
-    // Update the form data
+    
+    // Update form data
     setFormData((prevData) => {
       const updatedData = { ...prevData, [name]: value };
-
-      // Automatically set name, designation, and department if employeeId changes
-      if (name === "employeeId") {
-        const employeeInfo = employeeData[value] || { name: "", designation: "", department: "" };
-        updatedData.name = employeeInfo.name;
-        updatedData.designation = employeeInfo.designation;
-        updatedData.department = employeeInfo.department;
-      }
-
       return updatedData;
     });
   };
@@ -132,18 +140,9 @@ function NonTeaching() {
           <input
             type="text"
             name="employeeId"
-            list="employeeIdList"
             value={formData.employeeId}
-            onChange={handleInputChange}
-            required
+            readOnly
           />
-          <datalist id="employeeIdList">
-            {Object.keys(employeeData).map(id => (
-              <option key={id} value={id}>
-                {employeeData[id].name}
-              </option>
-            ))}
-          </datalist>
         </label>
 
         <label>

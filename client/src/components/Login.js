@@ -18,15 +18,15 @@ const LoginPage = () => {
       const response = await axios.post('http://localhost:3007/login', { empid, password });
 
       if (response.status === 200) {
-        const { empId, role, name, branch } = response.data;
+        const { empId, role, name, branch, employee_type } = response.data;
 
         // Store user data in sessionStorage
         sessionStorage.setItem('empid', empId);
         sessionStorage.setItem('role', role);
         sessionStorage.setItem('name', name);
         sessionStorage.setItem('branch', branch);
+        sessionStorage.setItem('employee_type', employee_type); // Store employee_type
         sessionStorage.setItem('loggedIn', true);
-
 
         // Redirect to the welcome page
         navigate('/welcome');

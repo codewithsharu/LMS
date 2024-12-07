@@ -1,10 +1,18 @@
 const mongoose = require('mongoose');
 
-const NonTeachingSchema = new mongoose.Schema({
+const EmployeeDataSchema = new mongoose.Schema({
     empid: {
         type: String,
         required: true,
         unique: true
+    },
+    employee_type: {
+        type: String,
+        required: true
+    },
+    role: {
+        type: String,
+        required: true
     },
     name: {
         type: String,
@@ -43,9 +51,13 @@ const NonTeachingSchema = new mongoose.Schema({
         October: { type: Number, default: 0 },
         November: { type: Number, default: 0 },
         December: { type: Number, default: 0 }
+    },
+    branch: {
+        type: String,
+        required: true
     }
 });
 
-const NonTeaching = mongoose.model('NonTeaching', NonTeachingSchema);
+const EmployeeData = mongoose.model('EmployeeData', EmployeeDataSchema);
 
-module.exports = NonTeaching;
+module.exports = EmployeeData;

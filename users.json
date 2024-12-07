@@ -1,0 +1,50 @@
+[
+    {
+        "empId": "A50ME0NT01",
+        "password": "123",
+        "role": "hod",
+        "name": "KANCHARI KALIDAS",
+        "branch": "Mechanical Engineering",
+        "employee_type": "Non-Teaching"
+    },
+    {
+        "empId": "2",
+        "password": "2",
+        "role": "Contract",
+        "name": "Bob Smith",
+        "branch": "Civil Engineering",
+        "employee_type": "Teaching"
+    },
+    {
+        "empId": "E003",
+        "password": "password789",
+        "role": "Intern",
+        "name": "Charlie Brown",
+        "branch": "Computer Science",
+        "employee_type": "Non-Teaching"
+    },
+    {
+        "empId": "E004",
+        "password": "password101",
+        "role": "Principal",
+        "name": "Diana Prince",
+        "branch": "Administration",
+        "employee_type": "Teaching"
+    },
+    {
+        "empId": "E005",
+        "password": "password202",
+        "role": "HOD",
+        "name": "Edward Norton",
+        "branch": "Electrical Engineering",
+        "employee_type": "Teaching"
+    },
+    {
+        "empId": "E006",
+        "password": "password303",
+        "role": "Dean",
+        "name": "Fiona Davis",
+        "branch": "Management",
+        "employee_type": "Non-Teaching"
+    }
+]

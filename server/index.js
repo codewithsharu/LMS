@@ -5,7 +5,7 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path'); 
 const Employee = require('./models/employee'); 
-const NonTeaching = require('./models/NonTeaching'); 
+const  EmployeeData = require('./models/EmployeeData'); 
 const Applied = require('./models/Applied');
 const ApprovedLeaves = require('./models/ApprovedLeaves');
 const Credentials = require('./models/Credentials');
@@ -40,90 +40,98 @@ app.use(
 // Default users for testing
 const defaultUsers = [
     {
-      empId: 'A50ME0NT01',
-      password: '1',
-      role: 'Permanent',
-      name: 'KANCHARI KALIDAS',
-      branch: 'Mechanical Engineering',
+        empId: 'A50ME0NT01',
+        password: '1',
+        role: 'hod',
+        name: 'KANCHARI KALIDAS',
+        branch: 'Mechanical Engineering',
+        employee_type: 'Non-Teaching' // Based on the context of the empId
     },
     {
-      empId: '2',
-      password: '2',
-      role: 'Contract',
-      name: 'Bob Smith',
-      branch: 'Civil Engineering',
+        empId: '2',
+        password: '2',
+        role: 'Contract',
+        name: 'Bob Smith',
+        branch: 'Civil Engineering',
+        employee_type: 'Teaching' // Teaching staff
     },
     {
-      empId: 'E003',
-      password: 'password789',
-      role: 'Intern',
-      name: 'Charlie Brown',
-      branch: 'Computer Science',
+        empId: 'E003',
+        password: 'password789',
+        role: 'Intern',
+        name: 'Charlie Brown',
+        branch: 'Computer Science',
+        employee_type: 'Non-Teaching' // Interns typically non-teaching
     },
     {
-      empId: 'E004',
-      password: 'password101',
-      role: 'Principal',
-      name: 'Diana Prince',
-      branch: 'Administration',
+        empId: 'E004',
+        password: 'password101',
+        role: 'Principal',
+        name: 'Diana Prince',
+        branch: 'Administration',
+        employee_type: 'Teaching' // Principal often classified as teaching
     },
     {
-      empId: 'E005',
-      password: 'password202',
-      role: 'HOD',
-      name: 'Edward Norton',
-      branch: 'Electrical Engineering',
+        empId: 'E005',
+        password: 'password202',
+        role: 'HOD',
+        name: 'Edward Norton',
+        branch: 'Electrical Engineering',
+        employee_type: 'Teaching' // HOD is teaching staff
     },
     {
-      empId: 'E006',
-      password: 'password303',
-      role: 'Dean',
-      name: 'Fiona Davis',
-      branch: 'Management',
+        empId: 'E006',
+        password: 'password303',
+        role: 'Dean',
+        name: 'Fiona Davis',
+        branch: 'Management',
+        employee_type: 'Non-Teaching' // Dean might be administrative
     }
-  ];
-  
+];
+
   
   // Login route
-  app.post('/login', async (req, res) => {
+app.post('/login', async (req, res) => {
     console.log("Reached login");
-  
+
     const { empid, password } = req.body;
-  
+
     try {
-      // Find user from the default data
-      const user = defaultUsers.find(u => u.empId === empid);
-  
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
-  
-      // Validate password
-      if (password !== user.password) {
-        return res.status(401).json({ message: 'Invalid password' });
-      }
-  
-      // Set session variables based on user details
-      req.session.authenticated = true;
-      req.session.empid = empid;
-      req.session.role = user.role;
-      req.session.name = user.name;
-      req.session.branch = user.branch;
-  
-      // Include empId in the response
-      res.status(200).json({ 
-        message: 'Login successful', 
-        empId: user.empId, 
-        role: user.role, 
-        name: user.name, 
-        branch: user.branch 
-      });
+        // Find user from the default data
+        const user = defaultUsers.find(u => u.empId === empid);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Validate password
+        if (password !== user.password) {
+            return res.status(401).json({ message: 'Invalid password' });
+        }
+
+        // Set session variables based on user details
+        req.session.authenticated = true;
+        req.session.empid = empid;
+        req.session.role = user.role;
+        req.session.name = user.name;
+        req.session.branch = user.branch;
+        req.session.employee_type = user.employee_type; // Include employee_type in the session
+
+        // Include empId and employee_type in the response
+        res.status(200).json({ 
+            message: 'Login successful', 
+            empId: user.empId, 
+            role: user.role, 
+            name: user.name, 
+            branch: user.branch,
+            employee_type: user.employee_type // Add to the response
+        });
     } catch (error) {
-      console.error('Error during login:', error);
-      res.status(500).json({ message: 'Internal server error' });
+        console.error('Error during login:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
-  });
-  
+});
+
 
 // // Middleware for role-based access
 // const requireRole = (role) => (req, res, next) => {
@@ -178,40 +186,44 @@ app.post('/employees', async (req, res) => {
 // developement----
 
 
-// Route to update database from NonTeachingdata.json
 app.get('/upnt', async (req, res) => {
     try {
         // Path to the JSON file
-        const dataPath = path.join(__dirname, 'NonTeachingdata.json');
+        const dataPath = path.join(__dirname, 'EmployeeData.json');
         
         // Read and parse the JSON file
         const jsonData = fs.readFileSync(dataPath, 'utf-8');
-        const nonTeachingStaff = JSON.parse(jsonData);
+        const EmployeeDataStaff = JSON.parse(jsonData);
         
         // Loop through the array and insert/update each record in the database
-        for (let staff of nonTeachingStaff) {
-            await NonTeaching.findOneAndUpdate(
+        for (let staff of EmployeeDataStaff) {
+            await EmployeeData.findOneAndUpdate(
                 { empid: staff.empid }, // Find by employee ID
                 { 
                     name: staff.name,
                     joining_date: staff.joining_date,
-                    contact_number: staff.contact_number
+                    contact_number: staff.contact_number,
+                    employee_type: staff.employee_type, // Add employee_type
+                    role: staff.role, // Add the role field
+                    branch: staff.branch // Add the branch field
                 },
                 { upsert: true, new: true } // Upsert option to insert if not found
             );
         }
         
-        res.status(200).json({ message: 'Database updated successfully from NonTeachingdata.json' });
+        res.status(200).json({ message: 'Database updated successfully from EmployeeData.json' });
     } catch (error) {
         console.error('Error updating database:', error);
         res.status(500).json({ error: error.message });
     }
 });
 
+
+
 // Sample route to fetch all non-teaching staff records
 app.get('/non-teaching', async (req, res) => {
     try {
-        const employees = await NonTeaching.find();
+        const employees = await  EmployeeData.find();
         res.status(200).json(employees);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -286,7 +298,7 @@ app.post('/approve-leave/:employeeId', async (req, res) => {
             return res.status(404).json({ message: 'Leave request not found' });
         }
 
-        const employee = await NonTeaching.findOne({ empid: leaveRequest.employeeId });
+        const employee = await  EmployeeData.findOne({ empid: leaveRequest.employeeId });
 
         // Check if employee exists
         if (!employee) {
@@ -400,7 +412,7 @@ app.get('/employee/:empid', async (req, res) => {
       console.log('Request received for empid:', empid); // Logging the empid from React
   
       // Fetch employee from the database
-      const employee = await NonTeaching.findOne({ empid });
+      const employee = await  EmployeeData.findOne({ empid });
   
       // Log the employee data fetched from the database
       console.log('Employee data from database:', employee);
