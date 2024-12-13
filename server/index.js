@@ -37,101 +37,52 @@ app.use(
   );
 
 
-// Default users for testing
-const defaultUsers = [
-    {
-        empId: 'A50ME0NT01',
-        password: '1',
-        role: 'hod',
-        name: 'KANCHARI KALIDAS',
-        branch: 'Mechanical Engineering',
-        employee_type: 'Non-Teaching' // Based on the context of the empId
-    },
-    {
-        empId: '2',
-        password: '2',
-        role: 'Contract',
-        name: 'Bob Smith',
-        branch: 'Civil Engineering',
-        employee_type: 'Teaching' // Teaching staff
-    },
-    {
-        empId: 'E003',
-        password: 'password789',
-        role: 'Intern',
-        name: 'Charlie Brown',
-        branch: 'Computer Science',
-        employee_type: 'Non-Teaching' // Interns typically non-teaching
-    },
-    {
-        empId: 'E004',
-        password: 'password101',
-        role: 'Principal',
-        name: 'Diana Prince',
-        branch: 'Administration',
-        employee_type: 'Teaching' // Principal often classified as teaching
-    },
-    {
-        empId: 'E005',
-        password: 'password202',
-        role: 'HOD',
-        name: 'Edward Norton',
-        branch: 'Electrical Engineering',
-        employee_type: 'Teaching' // HOD is teaching staff
-    },
-    {
-        empId: 'E006',
-        password: 'password303',
-        role: 'Dean',
-        name: 'Fiona Davis',
-        branch: 'Management',
-        employee_type: 'Non-Teaching' // Dean might be administrative
-    }
-];
-
-  
   // Login route
-app.post('/login', async (req, res) => {
-    console.log("Reached login");
-
-    const { empid, password } = req.body;
-
-    try {
-        // Find user from the default data
-        const user = defaultUsers.find(u => u.empId === empid);
-
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Validate password
-        if (password !== user.password) {
-            return res.status(401).json({ message: 'Invalid password' });
-        }
-
-        // Set session variables based on user details
-        req.session.authenticated = true;
-        req.session.empid = empid;
-        req.session.role = user.role;
-        req.session.name = user.name;
-        req.session.branch = user.branch;
-        req.session.employee_type = user.employee_type; // Include employee_type in the session
-
-        // Include empId and employee_type in the response
-        res.status(200).json({ 
-            message: 'Login successful', 
-            empId: user.empId, 
-            role: user.role, 
-            name: user.name, 
-            branch: user.branch,
-            employee_type: user.employee_type // Add to the response
-        });
-    } catch (error) {
-        console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
-
+  app.post('/login', async (req, res) => {
+      console.log("Reached login");
+  
+      const { empid, password } = req.body;
+  
+      try {
+          // Read the user data from the users.json file
+          const usersData = fs.readFileSync(path.join(__dirname, 'users.json'), 'utf8');
+          const defaultUsers = JSON.parse(usersData);
+  
+          // Find user from the loaded data
+          const user = defaultUsers.find(u => u.empId === empid);
+  
+          if (!user) {
+              return res.status(404).json({ message: 'User not found' });
+          }
+  
+          // Validate password
+          if (password !== user.password) {
+              return res.status(401).json({ message: 'Invalid password' });
+          }
+  
+          // Set session variables based on user details
+          req.session.authenticated = true;
+          req.session.empid = empid;
+          req.session.role = user.role;
+          req.session.name = user.name;
+          req.session.branch = user.branch;
+          req.session.employee_type = user.employee_type; // Include employee_type in the session
+  
+          // Include empId and employee_type in the response
+          res.status(200).json({
+              message: 'Login successful',
+              empId: user.empId,
+              role: user.role,
+              name: user.name,
+              branch: user.branch,
+              employee_type: user.employee_type // Add to the response
+          });
+      } catch (error) {
+          console.error('Error during login:', error);
+          res.status(500).json({ message: 'Internal server error' });
+      }
+  });
+  
 
 // // Middleware for role-based access
 // const requireRole = (role) => (req, res, next) => {

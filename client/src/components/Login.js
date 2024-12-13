@@ -15,7 +15,7 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3007/login', { empid, password });
+      const response = await axios.post('http://10.10.31.146:3007/login', { empid, password });
 
       if (response.status === 200) {
         const { empId, role, name, branch, employee_type } = response.data;

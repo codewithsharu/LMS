@@ -12,7 +12,7 @@ function CasualLeaveForm() {
     employeeId: "",
     name: "",
     designation: "",
-    department: "",
+    branch: "",
     availableLeaves: 15,
     leaveDays: "",
     leaveStartDate: "",
@@ -106,7 +106,7 @@ function CasualLeaveForm() {
                 { label: "Employee ID :", value: formData.employeeId },
                 { label: "Name:", value: formData.name },
                 { label: "Designation:", value: formData.designation },
-                { label: "Department:", value: formData.department },
+                { label: "branch:", value: formData.branch },
                 { label: "Available Leaves:", value: formData.availableLeaves },
                 { label: "Leave required (days):", value: formData.leaveDays },
                 { label: "From:", value: formData.leaveStartDate },
@@ -242,14 +242,14 @@ function CasualLeaveForm() {
 
         
         <label>
-          Department:
+          branch:
           <select
-            name="department"
-            value={formData.department}
+            name="branch"
+            value={formData.branch}
             onChange={handleInputChange}
             required
           >
-            <option value="">Select Department</option>
+            <option value="">Select branch</option>
             <option value="CSE">CSE</option>
             <option value="CSM">CSM</option>
             <option value="CSD">CSD</option>

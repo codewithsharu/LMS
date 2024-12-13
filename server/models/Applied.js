@@ -4,7 +4,7 @@ const AppliedSchema = new mongoose.Schema({
     employeeId: { type: String, required: true },
     name: { type: String, required: true },
     designation: { type: String, required: true },
-    department: { type: String, required: true },
+    branch: { type: String, required: true },
     leaveDays: { type: Number, required: true },
     leaveStartDate: { type: Date, required: true },
     leaveEndDate: { type: Date, required: true },
