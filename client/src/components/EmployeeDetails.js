@@ -10,7 +10,7 @@ const EmployeeDetails = () => {
 
   const fetchEmployeeDetails = async () => {
     try {
-      const response = await axios.get(`http://10.10.31.146:3007/employee/${empid}`);
+      const response = await axios.get(`http://localhost:3007/employee/${empid}`);
       setEmployee(response.data);
       setError("");
     } catch (err) {

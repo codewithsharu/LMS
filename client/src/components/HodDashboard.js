@@ -1,25 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './HODDashboard.css';
+import './HodDashboard.css';
 
 const HODDashboard = () => {
   const [applications, setApplications] = useState([]);
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
   const [rejectionMessage, setRejectionMessage] = useState('');
 
+  // Get the logged-in HOD's branch from sessionStorage or state
+  const hodBranch = sessionStorage.getItem('branch'); // Assuming 'branch' is stored in sessionStorage
+
   // Fetch leave applications assigned to HOD
   useEffect(() => {
     const fetchApplications = async () => {
       try {
         const response = await axios.get('http://localhost:3007/api/hod-applications');
-        setApplications(response.data);
+        // Filter applications by HOD's branch
+        const filteredApplications = response.data.filter(application => application.branch === hodBranch);
+        setApplications(filteredApplications);
       } catch (error) {
         console.error('Failed to fetch applications:', error);
       }
     };
 
     fetchApplications();
-  }, []);
+  }, [hodBranch]);
 
   // Function to reject an application
   const handleReject = async (employeeId) => {
@@ -98,7 +103,7 @@ const HODDashboard = () => {
               <tr key={application._id}>
                 <td>{application.name}</td>
                 <td>{application.designation}</td>
-                <td>{application.department}</td>
+                <td>{application.branch}</td>
                 <td>{application.leaveDays}</td>
                 <td>{application.leaveReasons}</td>
                 <td>

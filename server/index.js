@@ -12,6 +12,11 @@ const Credentials = require('./models/Credentials');
 const app = express();
 const session = require('express-session');
 const PORT = process.env.PORT || 3007;
+const jwt = require('jsonwebtoken');
+
+
+const SECRET_KEY = 'your_secret_key'; // Keep this secret and secure
+
 require('dotenv').config();
 app.use(cors());
 app.use(express.json());
@@ -37,53 +42,77 @@ app.use(
   );
 
 
-  // Login route
-  app.post('/login', async (req, res) => {
-      console.log("Reached login");
+// Login route
+app.post('/login', async (req, res) => {
+    console.log("Login request received:", req.body);
+    
+    const { empid, password } = req.body;
+    console.log(req.body);
   
-      const { empid, password } = req.body;
+    try {
+      // Read the user data from users.json
+      const usersData = fs.readFileSync(path.join(__dirname, 'users.json'), 'utf8');
+      const users = JSON.parse(usersData);
   
-      try {
-          // Read the user data from the users.json file
-          const usersData = fs.readFileSync(path.join(__dirname, 'users.json'), 'utf8');
-          const defaultUsers = JSON.parse(usersData);
+      // Log the users to make sure data is being read correctly
+      console.log("Users Data:", users);
   
-          // Find user from the loaded data
-          const user = defaultUsers.find(u => u.empId === empid);
+      // Find the user with the given empid
+      const user = users.find(u => u.empId === empid);
   
-          if (!user) {
-              return res.status(404).json({ message: 'User not found' });
-          }
-  
-          // Validate password
-          if (password !== user.password) {
-              return res.status(401).json({ message: 'Invalid password' });
-          }
-  
-          // Set session variables based on user details
-          req.session.authenticated = true;
-          req.session.empid = empid;
-          req.session.role = user.role;
-          req.session.name = user.name;
-          req.session.branch = user.branch;
-          req.session.employee_type = user.employee_type; // Include employee_type in the session
-  
-          // Include empId and employee_type in the response
-          res.status(200).json({
-              message: 'Login successful',
-              empId: user.empId,
-              role: user.role,
-              name: user.name,
-              branch: user.branch,
-              employee_type: user.employee_type // Add to the response
-          });
-      } catch (error) {
-          console.error('Error during login:', error);
-          res.status(500).json({ message: 'Internal server error' });
+      // Check if the user exists
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
       }
+  
+      // Validate the password
+      if (password !== user.password) {
+        return res.status(401).json({ message: 'Invalid password' });
+      }
+  
+      // Create the JWT token with an expiration of 1 hour
+      const token = jwt.sign(
+        { empId: user.empId, role: user.role, name: user.name, branch: user.branch, employee_type: user.employee_type },
+        SECRET_KEY,
+        { expiresIn: '1h' }
+      );
+  
+      // Send the JWT token to the frontend
+      return res.status(200).json({
+        message: 'Login successful',
+        token,
+        empId: user.empId,
+        role: user.role,
+        name: user.name,
+        branch: user.branch,
+        employee_type: user.employee_type
+      });
+  
+    } catch (error) {
+      console.error('Error during login:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
   });
   
 
+  // Protected route to get user data from JWT
+app.get('/user-data', (req, res) => {
+    const token = req.headers['authorization']?.split(' ')[1]; // Get token from Authorization header
+  
+    if (!token) {
+      return res.status(401).json({ message: 'Token is required' });
+    }
+  
+    jwt.verify(token, SECRET_KEY, (err, decoded) => {
+      if (err) {
+        return res.status(401).json({ message: 'Invalid or expired token' });
+      }
+  
+      // Send the decoded user data
+      res.status(200).json(decoded);
+    });
+  });
+  
 // // Middleware for role-based access
 // const requireRole = (role) => (req, res, next) => {
 //     if (req.session.authenticated && req.session.role === role) {
@@ -191,7 +220,7 @@ app.post('/submit-application', async (req, res) => {
             employeeId: formData.employeeId,
             name: formData.name,
             designation: formData.designation,
-            department: formData.department,
+            branch: formData.branch,
             leaveDays: formData.leaveDays,
             leaveStartDate: formData.leaveStartDate,
             leaveEndDate: formData.leaveEndDate,

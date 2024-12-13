@@ -9,7 +9,7 @@ const NonTeaching = () => {
     employeeId: "",
     name: "",
     designation: "",
-    department: "",
+    branch: "", // Make sure this field is part of the form data
     leaveDays: "",
     leaveStartDate: "",
     leaveEndDate: "",
@@ -21,14 +21,14 @@ const NonTeaching = () => {
 
   const navigate = useNavigate(); // For redirecting to login page
 
-  // Check if the user is logged in
+  // Check if the user is logged in and populate the form
   useEffect(() => {
-    const loggedIn = sessionStorage.getItem('loggedIn');
+    const loggedIn = sessionStorage.getItem('isLoggedIn');
     if (!loggedIn) {
       // Redirect to login page if not logged in
       navigate("/login");
     } else {
-      // If logged in, populate the form using session data
+      // Populate form from session data
       const empId = sessionStorage.getItem('empid');
       const role = sessionStorage.getItem('role');
       const name = sessionStorage.getItem('name');
@@ -37,8 +37,8 @@ const NonTeaching = () => {
       setFormData({
         employeeId: empId,
         name: name,
-        designation: role, // Role is used as designation
-        department: branch, // Branch is used as department
+        designation: role, // Role as designation
+        branch: branch, // Ensure this value is set
         leaveDays: "",
         leaveStartDate: "",
         leaveEndDate: "",
@@ -94,6 +94,7 @@ const NonTeaching = () => {
   };
 
   const handleSubmit = async () => {
+    console.log(formData); // Check form data before submitting
     try {
       const response = await fetch('http://localhost:3007/submit-application', {
         method: 'POST',
@@ -113,7 +114,7 @@ const NonTeaching = () => {
           employeeId: "",
           name: "",
           designation: "",
-          department: "",
+          branch: "",
           leaveDays: "",
           leaveStartDate: "",
           leaveEndDate: "",
@@ -170,11 +171,11 @@ const NonTeaching = () => {
         </label>
 
         <label>
-          Department:
+          Branch:
           <input
             type="text"
-            name="department"
-            value={formData.department}
+            name="branch"
+            value={formData.branch}
             onChange={handleInputChange}
             required
             readOnly

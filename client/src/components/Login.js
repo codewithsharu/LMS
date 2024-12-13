@@ -15,20 +15,24 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://10.10.31.146:3007/login', { empid, password });
+      // Send the login request with empid and password
+      const response = await axios.post('http://localhost:3007/login', { empid, password });
 
       if (response.status === 200) {
-        const { empId, role, name, branch, employee_type } = response.data;
+        const { token, empId, role, name, branch, employee_type } = response.data;
 
-        // Store user data in sessionStorage
+        // Store JWT token in sessionStorage or localStorage
+        sessionStorage.setItem('jwtToken', token); // Store JWT token for future requests
+
+        // Optionally, store user data (can also be retrieved from the token payload)
         sessionStorage.setItem('empid', empId);
         sessionStorage.setItem('role', role);
         sessionStorage.setItem('name', name);
         sessionStorage.setItem('branch', branch);
-        sessionStorage.setItem('employee_type', employee_type); // Store employee_type
-        sessionStorage.setItem('loggedIn', true);
+        sessionStorage.setItem('employee_type', employee_type);
+        sessionStorage.setItem('isLoggedIn', true);
 
-        // Redirect to the welcome page
+        // Redirect to the welcome page after successful login
         navigate('/welcome');
       }
     } catch (err) {

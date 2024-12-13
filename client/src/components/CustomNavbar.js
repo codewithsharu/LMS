@@ -10,7 +10,7 @@ function CustomNavbar() {
   const navigate = useNavigate();
 
   // Check if the user is logged in
-  const isLoggedIn = sessionStorage.getItem('loggedIn') === 'true';
+  const isLoggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
 
   // Handle logout functionality
   const handleLogout = async () => {
