@@ -5,27 +5,37 @@ import "./EmployeeDetails.css"; // Link to your CSS file
 const EmployeeDetails = () => {
   const [employee, setEmployee] = useState(null);
   const [error, setError] = useState("");
-
-  const empid = sessionStorage.getItem("empid");
-
-  const fetchEmployeeDetails = async () => {
-    try {
-      const response = await axios.get(`http://localhost:3007/employee/${empid}`);
-      setEmployee(response.data);
-      setError("");
-    } catch (err) {
-      setError("Employee not found or server error.");
-      setEmployee(null);
-    }
-  };
+  const token = sessionStorage.getItem("jwtToken"); // Retrieve the JWT token
 
   useEffect(() => {
-    if (empid) {
-      fetchEmployeeDetails();
-    } else {
-      setError("No Employee ID found in session.");
-    }
-  }, [empid]);
+    const fetchEmployeeDetails = async () => {
+      if (!token) {
+        setError("No token found. Please log in.");
+        return;
+      }
+
+      try {
+        // Fetch user data to get empid using the token
+        const response = await axios.get("http://localhost:3007/user-data", {
+          headers: {
+            Authorization: `Bearer ${token}`, // Include the token in the request header
+          },
+        });
+
+        const empid = response.data.empId; // Extract empid from the response
+
+        // Now, make the request with empid in the URL (no token in header)
+        const employeeResponse = await axios.get(`http://localhost:3007/employee/${empid}`);
+        setEmployee(employeeResponse.data); // Set employee data if successful
+        setError(""); // Clear any previous errors
+      } catch (err) {
+        setError("Employee not found or server error.");
+        setEmployee(null); // Clear employee data in case of an error
+      }
+    };
+
+    fetchEmployeeDetails(); // Fetch employee details when the component mounts
+  }, [token]);
 
   return (
     <div className="employee-details-container">

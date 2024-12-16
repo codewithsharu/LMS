@@ -43,6 +43,7 @@ app.use(
 
 
 // Login route
+// Login route
 app.post('/login', async (req, res) => {
     console.log("Login request received:", req.body);
     
@@ -50,50 +51,60 @@ app.post('/login', async (req, res) => {
     console.log(req.body);
   
     try {
-      // Read the user data from users.json
-      const usersData = fs.readFileSync(path.join(__dirname, 'users.json'), 'utf8');
-      const users = JSON.parse(usersData);
+        // Read the user data from users.json
+        const usersData = fs.readFileSync(path.join(__dirname, 'users.json'), 'utf8');
+        const users = JSON.parse(usersData);
   
-      // Log the users to make sure data is being read correctly
-      console.log("Users Data:", users);
+        // Log the users to make sure data is being read correctly
+        console.log("Users Data:", users);
   
-      // Find the user with the given empid
-      const user = users.find(u => u.empId === empid);
+        // Find the user with the given empid
+        const user = users.find(u => u.empId === empid);
   
-      // Check if the user exists
-      if (!user) {
-        return res.status(404).json({ message: 'User not found' });
-      }
+        // Check if the user exists
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
   
-      // Validate the password
-      if (password !== user.password) {
-        return res.status(401).json({ message: 'Invalid password' });
-      }
+        // Validate the password
+        if (password !== user.password) {
+            return res.status(401).json({ message: 'Invalid password' });
+        }
   
-      // Create the JWT token with an expiration of 1 hour
-      const token = jwt.sign(
-        { empId: user.empId, role: user.role, name: user.name, branch: user.branch, employee_type: user.employee_type },
-        SECRET_KEY,
-        { expiresIn: '1h' }
-      );
-  
-      // Send the JWT token to the frontend
-      return res.status(200).json({
-        message: 'Login successful',
-        token,
-        empId: user.empId,
-        role: user.role,
-        name: user.name,
-        branch: user.branch,
-        employee_type: user.employee_type
-      });
-  
+        // Create the JWT token with an expiration of 1 hour
+        const token = jwt.sign(
+            { 
+                empId: user.empId, 
+                role: user.role, 
+                name: user.name, 
+                branch: user.branch, 
+                employee_type: user.employee_type,
+                personalKey: user.personalKey // Include personalKey in the token payload
+            },
+            SECRET_KEY,
+            { expiresIn: '1h' }
+        );
+
+        // Return the token, personalKey, and user details in the response
+        return res.status(200).json({ 
+            message: 'Login successful', 
+            token: token, 
+            personalKey: user.personalKey,
+         
+                empId: user.empId, 
+                role: user.role, 
+                name: user.name, 
+                branch: user.branch, 
+                employee_type: user.employee_type
+            
+        });
     } catch (error) {
-      console.error('Error during login:', error);
-      return res.status(500).json({ message: 'Internal server error' });
+        console.error("Error processing login:", error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
-  });
-  
+});
+
+
 
   // Protected route to get user data from JWT
 app.get('/user-data', (req, res) => {
@@ -113,14 +124,6 @@ app.get('/user-data', (req, res) => {
     });
   });
   
-// // Middleware for role-based access
-// const requireRole = (role) => (req, res, next) => {
-//     if (req.session.authenticated && req.session.role === role) {
-//         return next();
-//     }
-//     res.status(403).json({ message: 'Access denied' });
-// };
-
 
 // Assuming you're using express for your backend
 app.post('/logout', (req, res) => {
@@ -148,7 +151,7 @@ app.get('/check', async (req, res) => {
     }
 });
 
-// app.js (Update this section)
+
 
 app.post('/employees', async (req, res) => {
     try {

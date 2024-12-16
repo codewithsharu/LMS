@@ -5,6 +5,7 @@ import axios from 'axios';
 const LoginPage = () => {
   const [empid, setEmpid] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -19,25 +20,31 @@ const LoginPage = () => {
       const response = await axios.post('http://localhost:3007/login', { empid, password });
 
       if (response.status === 200) {
-        const { token, empId, role, name, branch, employee_type } = response.data;
+        const { token, empId, role, name, branch, employee_type, personalKey } = response.data;
 
-        // Store JWT token in sessionStorage or localStorage
-        sessionStorage.setItem('jwtToken', token); // Store JWT token for future requests
-
-        // Optionally, store user data (can also be retrieved from the token payload)
+        // Store JWT token and user data in sessionStorage
+        sessionStorage.setItem('jwtToken', token);
         sessionStorage.setItem('empid', empId);
         sessionStorage.setItem('role', role);
         sessionStorage.setItem('name', name);
         sessionStorage.setItem('branch', branch);
         sessionStorage.setItem('employee_type', employee_type);
+        sessionStorage.setItem('personalKey', personalKey);
         sessionStorage.setItem('isLoggedIn', true);
 
-        // Redirect to the welcome page after successful login
+        // Clear input fields
+        setEmpid('');
+        setPassword('');
+
+        // Redirect to the welcome page
         navigate('/welcome');
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'An unexpected error occurred.';
       setError(errorMessage);
+
+      // Clear error after 5 seconds
+      setTimeout(() => setError(''), 5000);
     } finally {
       setLoading(false);
     }
@@ -59,13 +66,22 @@ const LoginPage = () => {
         </div>
         <div style={{ marginBottom: '10px' }}>
           <label style={{ display: 'block', marginBottom: '5px' }}>Password:</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', padding: '8px' }}
-          />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <input
+              type={showPassword ? 'text' : 'password'}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              style={{ width: 'calc(100% - 60px)', padding: '8px' }}
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              style={{ marginLeft: '10px', padding: '8px 15px' }}
+            >
+              {showPassword ? 'Hide' : 'Show'}
+            </button>
+          </div>
         </div>
         <button
           type="submit"

@@ -5,7 +5,8 @@
         "role": "hod",
         "name": "KANCHARI KALIDAS",
         "branch": "MEC",
-        "employee_type": "Non-Teaching"
+        "employee_type": "Non-Teaching",
+        "personalKey": "hodKey"
     },
     {
         "empId": "A50PD0NT03",
@@ -13,7 +14,8 @@
         "role": "NTStaff",
         "name": "V ESWARA RAO",
         "branch": "MEC",
-         "employee_type": "Non-Teaching"
+        "employee_type": "Non-Teaching",
+        "personalKey": "principalKey"
     },
     {
         "empId": "2",
@@ -21,7 +23,8 @@
         "role": "Contract",
         "name": "Bob Smith",
         "branch": "Civil Engineering",
-        "employee_type": "Teaching"
+        "employee_type": "Teaching",
+        "personalKey": "CK-003"
     },
     {
         "empId": "E003",
@@ -29,7 +32,8 @@
         "role": "Intern",
         "name": "Charlie Brown",
         "branch": "Computer Science",
-        "employee_type": "Non-Teaching"
+        "employee_type": "Non-Teaching",
+        "personalKey": "CK-004"
     },
     {
         "empId": "E004",
@@ -37,7 +41,8 @@
         "role": "Principal",
         "name": "Diana Prince",
         "branch": "Administration",
-        "employee_type": "Teaching"
+        "employee_type": "Teaching",
+        "personalKey": "CK-005"
     },
     {
         "empId": "E005",
@@ -45,7 +50,8 @@
         "role": "HOD",
         "name": "Edward Norton",
         "branch": "Electrical Engineering",
-        "employee_type": "Teaching"
+        "employee_type": "Teaching",
+        "personalKey": "CK-006"
     },
     {
         "empId": "E006",
@@ -53,6 +59,7 @@
         "role": "Dean",
         "name": "Fiona Davis",
         "branch": "Management",
-        "employee_type": "Non-Teaching"
+        "employee_type": "Non-Teaching",
+        "personalKey": "CK-007"
     }
 ]
