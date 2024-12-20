@@ -24,12 +24,12 @@ const LoginPage = () => {
 
         // Store JWT token and user data in sessionStorage
         sessionStorage.setItem('jwtToken', token);
-        sessionStorage.setItem('empid', empId);
-        sessionStorage.setItem('role', role);
-        sessionStorage.setItem('name', name);
-        sessionStorage.setItem('branch', branch);
-        sessionStorage.setItem('employee_type', employee_type);
-        sessionStorage.setItem('personalKey', personalKey);
+        // sessionStorage.setItem('empid', empId);
+        // sessionStorage.setItem('role', role);
+        // sessionStorage.setItem('name', name);
+        // sessionStorage.setItem('branch', branch);
+        // sessionStorage.setItem('employee_type', employee_type);
+        // sessionStorage.setItem('personalKey', personalKey);
         sessionStorage.setItem('isLoggedIn', true);
 
         // Clear input fields

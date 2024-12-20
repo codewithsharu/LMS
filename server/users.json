@@ -20,11 +20,11 @@
     {
         "empId": "2",
         "password": "2",
-        "role": "Contract",
+        "role": "director",
         "name": "Bob Smith",
         "branch": "Civil Engineering",
         "employee_type": "Teaching",
-        "personalKey": "CK-003"
+        "personalKey": "direct1orKey"
     },
     {
         "empId": "E003",

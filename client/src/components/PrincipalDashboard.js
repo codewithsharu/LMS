@@ -89,7 +89,7 @@ const PrincipalDashboard = () => {
                             <tr key={application._id}>
                                 <td>{application.name}</td>
                                 <td>{application.designation}</td>
-                                <td>{application.department}</td>
+                                <td>{application.branch}</td>
                                 <td>{application.leaveDays}</td>
                                 <td>{application.leaveReasons}</td>
                                 <td>{application.principalApproval.status || 'Pending'}</td>

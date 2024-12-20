@@ -26,15 +26,15 @@ const uri = process.env.MONGODB_URI;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         console.log("MongoDB connected to the  database");
-       
-        // insertDefaultData();
-    })
-    .catch(err => console.error("MongoDB connection error:", err));
+    });
 
-// Configure session middleware
+
+
+
+
 app.use(
     session({
-      secret: 'your_secret_key', // Replace with a secure key
+      secret: 'your_secret_key', 
       resave: false,
       saveUninitialized: false,
       cookie: { secure: false, maxAge: 1000 * 60 * 60 } // 1 hour
@@ -42,7 +42,7 @@ app.use(
   );
 
 
-// Login route
+
 // Login route
 app.post('/login', async (req, res) => {
     console.log("Login request received:", req.body);
@@ -51,27 +51,24 @@ app.post('/login', async (req, res) => {
     console.log(req.body);
   
     try {
-        // Read the user data from users.json
+        
         const usersData = fs.readFileSync(path.join(__dirname, 'users.json'), 'utf8');
         const users = JSON.parse(usersData);
   
-        // Log the users to make sure data is being read correctly
         console.log("Users Data:", users);
   
-        // Find the user with the given empid
         const user = users.find(u => u.empId === empid);
   
-        // Check if the user exists
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
   
-        // Validate the password
+      
         if (password !== user.password) {
             return res.status(401).json({ message: 'Invalid password' });
         }
   
-        // Create the JWT token with an expiration of 1 hour
+    
         const token = jwt.sign(
             { 
                 empId: user.empId, 
@@ -79,13 +76,12 @@ app.post('/login', async (req, res) => {
                 name: user.name, 
                 branch: user.branch, 
                 employee_type: user.employee_type,
-                personalKey: user.personalKey // Include personalKey in the token payload
+                personalKey: user.personalKey 
             },
             SECRET_KEY,
             { expiresIn: '1h' }
         );
 
-        // Return the token, personalKey, and user details in the response
         return res.status(200).json({ 
             message: 'Login successful', 
             token: token, 
@@ -125,10 +121,9 @@ app.get('/user-data', (req, res) => {
   });
   
 
-// Assuming you're using express for your backend
 app.post('/logout', (req, res) => {
     console.log('Logout request received');
-    // Perform logout actions (destroy session, etc.)
+   
     req.session.destroy((err) => {
       if (err) {
         console.error('Error destroying session:', err);
@@ -171,26 +166,26 @@ app.post('/employees', async (req, res) => {
 
 app.get('/upnt', async (req, res) => {
     try {
-        // Path to the JSON file
+        
         const dataPath = path.join(__dirname, 'EmployeeData.json');
         
-        // Read and parse the JSON file
+       
         const jsonData = fs.readFileSync(dataPath, 'utf-8');
         const EmployeeDataStaff = JSON.parse(jsonData);
         
-        // Loop through the array and insert/update each record in the database
+       
         for (let staff of EmployeeDataStaff) {
             await EmployeeData.findOneAndUpdate(
-                { empid: staff.empid }, // Find by employee ID
+                { empid: staff.empid }, 
                 { 
                     name: staff.name,
                     joining_date: staff.joining_date,
                     contact_number: staff.contact_number,
-                    employee_type: staff.employee_type, // Add employee_type
-                    role: staff.role, // Add the role field
-                    branch: staff.branch // Add the branch field
+                    employee_type: staff.employee_type, 
+                    role: staff.role, 
+                    branch: staff.branch 
                 },
-                { upsert: true, new: true } // Upsert option to insert if not found
+                { upsert: true, new: true } 
             );
         }
         
@@ -203,22 +198,13 @@ app.get('/upnt', async (req, res) => {
 
 
 
-// Sample route to fetch all non-teaching staff records
-app.get('/non-teaching', async (req, res) => {
-    try {
-        const employees = await  EmployeeData.find();
-        res.status(200).json(employees);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
 
-// POST endpoint to receive form data
+
 app.post('/submit-application', async (req, res) => {
     try {
         const formData = req.body;
 
-        // Create a new document in the Applied collection
+     
         const newApplication = new Applied({
             employeeId: formData.employeeId,
             name: formData.name,
@@ -251,7 +237,7 @@ app.get('/applied-leaves', async (req, res) => {
 });   
 
 
-// Simplified month calculation function
+
 const calculateMonth = (date) => {
     const monthMap = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -485,7 +471,6 @@ app.get('/api/hod-applications', async (req, res) => {
   });
   
 
-// Route to get all applications assigned to Principal
 // Route to get all applications assigned to Principal
 app.get('/api/principal-applications', async (req, res) => {
     try {
