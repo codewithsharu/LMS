@@ -28,7 +28,7 @@ const EmployeeDataSchema = new mongoose.Schema({
     },
     total_leaves: {
         type: Number,
-        default: 15
+        default: 0
     },
     extra_leaves: {
         type: Number,
@@ -36,7 +36,7 @@ const EmployeeDataSchema = new mongoose.Schema({
     },
     available_leaves: {
         type: Number,
-        default: 15
+        default: 0
     },
     monthly_leaves: {
         January: { type: Number, default: 0 },
@@ -55,7 +55,29 @@ const EmployeeDataSchema = new mongoose.Schema({
     branch: {
         type: String,
         required: true
-    }
+    },
+    leave_counts: {
+        casual: { type: Number, default: 0 }, 
+        hpcl: { type: Number, default: 0 },   
+        od: { type: Number, default: 0 }      
+    },
+  
+    assigned_duties: [{
+        assigned_on_duty: { type: Boolean, default: false },
+        assigned_on_duty_from: { type: Date },
+        assigned_on_duty_to: { type: Date },
+        purpose_of_duty: { type: String },
+        assigned_to: { type: String },
+        assigned_to_empid: { type: String }
+    }],
+    
+    duties_taken_over: [{
+        duty_taken_over_from: { type: Date },
+        duty_taken_over_to: { type: Date },
+        purpose_of_duty: { type: String },
+        taken_over_by: { type: String }, 
+        taken_over_by_empid: { type: String } 
+    }]
 });
 
 const EmployeeData = mongoose.model('EmployeeData', EmployeeDataSchema);

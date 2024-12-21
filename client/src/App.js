@@ -31,17 +31,17 @@ function App() {
         try {
           const response = await axios.get('http://localhost:3007/user-data', {
             headers: {
-              Authorization: `Bearer ${token}`, // Include the token in the request header
+              Authorization: `Bearer ${token}`, 
             },
           });
-          const role = response.data.role; // Assuming 'role' is part of the response
-          setUserRole(role); // Set the user's role
-          setAuthenticated(true); // Mark the user as authenticated
+          const role = response.data.role;
+          setUserRole(role); 
+          setAuthenticated(true); 
         } catch (error) {
           console.error('Error fetching user role:', error);
           setAuthenticated(false);
         } finally {
-          setLoading(false); // Set loading to false after fetching
+          setLoading(false); 
         }
       };
 

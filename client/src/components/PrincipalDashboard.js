@@ -6,6 +6,7 @@ const PrincipalDashboard = () => {
     const [applications, setApplications] = useState([]);
     const [selectedApplicationId, setSelectedApplicationId] = useState(null);
     const [rejectionMessage, setRejectionMessage] = useState('');
+    const userData = useSelector((state) => state.)
 
     // Fetch leave applications assigned to Principal
     useEffect(() => {
