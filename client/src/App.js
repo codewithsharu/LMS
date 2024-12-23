@@ -1,7 +1,8 @@
 import './App.css';
 import CustomNavbar from './components/CustomNavbar';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
 import Contact from './components/Contact';
 import About from './components/About';
@@ -18,11 +19,12 @@ import Login from './components/Login';
 import WelcomePage from './components/WelcomePage';
 import UnauthorizedPage from './components/UnauthorizedPage';
 import UserData from './components/UserData';
+import SomeComponent from './components/SomeComponent';
+import { setAuthenticated, setUserRole, clearUserData } from './actions/userActions'; // Import Redux actions
 
 function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const dispatch = useDispatch();
+  const { authenticated, userRole, loading } = useSelector((state) => state.user); // Use Redux state
 
   useEffect(() => {
     const token = sessionStorage.getItem('jwtToken'); // Retrieve the JWT token
@@ -31,31 +33,27 @@ function App() {
         try {
           const response = await axios.get('http://localhost:3007/user-data', {
             headers: {
-              Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${token}`,
             },
           });
           const role = response.data.role;
-          setUserRole(role); 
-          setAuthenticated(true); 
+          dispatch(setUserRole(role)); // Dispatch role action
+          dispatch(setAuthenticated(true)); // Dispatch authenticated action
         } catch (error) {
           console.error('Error fetching user role:', error);
-          setAuthenticated(false);
-        } finally {
-          setLoading(false); 
+          dispatch(setAuthenticated(false)); // Dispatch failure action
         }
       };
 
       fetchUserRole();
     } else {
-      setAuthenticated(false);
-      setLoading(false);
+      dispatch(setAuthenticated(false)); // Dispatch failure action if no token
     }
-  }, []);
+  }, [dispatch]);
 
   const handleLoginSuccess = (token) => {
     sessionStorage.setItem('jwtToken', token); // Save the token in sessionStorage
-    setAuthenticated(true); // Mark the user as authenticated
-    setLoading(true); // Set loading to true while fetching role
+    dispatch(setAuthenticated(true)); // Mark the user as authenticated
     // Fetch user details after login
     const fetchUserRole = async () => {
       try {
@@ -65,12 +63,10 @@ function App() {
           },
         });
         const role = response.data.role; // Assuming 'role' is part of the response
-        setUserRole(role); // Set the user's role
+        dispatch(setUserRole(role)); // Set the user's role
       } catch (error) {
         console.error('Error fetching user role:', error);
-        setAuthenticated(false);
-      } finally {
-        setLoading(false); // Set loading to false after fetching
+        dispatch(setAuthenticated(false)); // Mark as not authenticated
       }
     };
 
@@ -78,8 +74,7 @@ function App() {
   };
 
   const handleLogout = () => {
-    setAuthenticated(false);
-    setUserRole(null);
+    dispatch(clearUserData()); // Clear user data in Redux store
     sessionStorage.removeItem('jwtToken'); // Clear sessionStorage on logout
   };
 
@@ -96,6 +91,7 @@ function App() {
           <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
           <Route path="/welcome" element={<WelcomePage />} />
           <Route path="/user-data" element={<UserData />} />
+          <Route path="/test" element={<SomeComponent />} />
 
           {/* Public Pages */}
           <Route path="/" element={<Home />} />

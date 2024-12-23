@@ -1,0 +1,8 @@
+# Navigate to the server directory and run nodemon index.js
+Start-Process powershell -ArgumentList "cd I:\LMS\LMS\server; nodemon index.js" -NoNewWindow
+
+# Wait a few seconds for the server to start
+Start-Sleep -Seconds 5
+
+# Navigate to the client directory and run npm start
+Start-Process powershell -ArgumentList "cd I:\LMS\LMS\client; npm start" -NoNewWindow
