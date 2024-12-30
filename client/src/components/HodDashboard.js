@@ -7,55 +7,54 @@ const HODDashboard = () => {
   const [selectedApplicationId, setSelectedApplicationId] = useState(null);
   const [rejectionMessage, setRejectionMessage] = useState("");
   const [error, setError] = useState("");
-
-  const token = sessionStorage.getItem("jwtToken"); // Retrieve JWT token
   const [branch, setBranch] = useState("");
+  const token = sessionStorage.getItem("jwtToken");
 
   // Fetch HOD details to get the branch
   useEffect(() => {
     const fetchHODDetails = async () => {
-      if (!token) {
-        setError("No token found. Please log in.");
-        return;
-      }
-
       try {
         const response = await axios.get("http://localhost:3007/user-data", {
           headers: {
-            Authorization: `Bearer ${token}`, // Correctly formatted header
+            Authorization: `Bearer ${token}`,
           },
         });
-        setBranch(response.data.branch); // Set branch from response
+        setBranch(response.data.branch);
       } catch (err) {
         console.error("Failed to fetch HOD details:", err);
-        setError("Failed to fetch user details. Please try again later.");
+        setError("Failed to fetch user details");
       }
     };
 
-    fetchHODDetails();
+    if (token) {
+      fetchHODDetails();
+    } else {
+      setError("No token found. Please log in.");
+    }
   }, [token]);
 
   // Fetch applications based on the branch
   useEffect(() => {
-    if (!branch) return; // Skip fetch until branch is loaded
-
     const fetchApplications = async () => {
+      if (!branch || !token) return;
+
       try {
         const response = await axios.get(
           "http://localhost:3007/api/hod-applications",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Include JWT token in header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
-        // Filter applications for the HOD's branch
+        
         const filteredApplications = response.data.filter(
           (application) => application.branch === branch
         );
         setApplications(filteredApplications);
       } catch (err) {
         console.error("Failed to fetch applications:", err);
+        setError("Failed to fetch applications");
       }
     };
 

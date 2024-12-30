@@ -6,18 +6,22 @@ const initialState = {
   branch: null,
   employee_type: null,
   personalKey: null,
-  isAuthenticated: false
+  isAuthenticated: false,
+  dataFetched: false
 };
 
 const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_USER_DATA':
+      console.log('Setting user data:', action.payload);
       return {
         ...state,
         ...action.payload,
-        isAuthenticated: true
+        isAuthenticated: true,
+        dataFetched: true
       };
     case 'LOGOUT':
+      console.log('Logging out');
       return initialState;
     default:
       return state;

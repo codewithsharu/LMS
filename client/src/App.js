@@ -1,8 +1,10 @@
 import './App.css';
 import CustomNavbar from './components/CustomNavbar';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserData } from './store/slices/authSlice';
+import { getUserDataFromToken } from './utils/authUtils';
 import Contact from './components/Contact';
 import About from './components/About';
 import Home from './components/Home';
@@ -18,127 +20,208 @@ import Login from './components/Login';
 import WelcomePage from './components/WelcomePage';
 import UnauthorizedPage from './components/UnauthorizedPage';
 import UserData from './components/UserData';
-import SomeComponent from './components/SomeComponent';
-function App() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState(null);
-  const [loading, setLoading] = useState(true);
 
+import RoleDisplay from './components/RoleDisplay';
+import axios from 'axios';
+
+function App() {
+  const dispatch = useDispatch();
+  const [userRole, setUserRole] = useState(null);
+  const { isAuthenticated, token } = useSelector(state => state.auth);
+  const userData = token ? getUserDataFromToken(token) : null;
+
+  // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Update token initialization
   useEffect(() => {
-    const token = sessionStorage.getItem('jwtToken'); // Retrieve the JWT token
-    if (token) {
-      const fetchUserRole = async () => {
+    const initializeAuth = async () => {
+      const storedToken = sessionStorage.getItem('jwtToken');
+      if (storedToken) {
+        console.log('Found token on load:', storedToken);
+        const decodedToken = getUserDataFromToken(storedToken);
+        console.log('Decoded token:', decodedToken);
+        dispatch(setUserData({ token: storedToken }));
+        
         try {
           const response = await axios.get('http://localhost:3007/user-data', {
             headers: {
-              Authorization: `Bearer ${token}`, 
+              Authorization: `Bearer ${storedToken}`,
             },
           });
-          const role = response.data.role;
-          setUserRole(role); 
-          setAuthenticated(true); 
+          console.log('API Response:', response.data);
+          if (response.data && response.data.role) {
+            setUserRole(response.data.role);
+            console.log('Set userRole to:', response.data.role);
+          }
         } catch (error) {
           console.error('Error fetching user role:', error);
-          setAuthenticated(false);
-        } finally {
-          setLoading(false); 
+          setUserRole(null);
         }
-      };
-
-      fetchUserRole();
-    } else {
-      setAuthenticated(false);
-      setLoading(false);
-    }
-  }, []);
-
-  const handleLoginSuccess = (token) => {
-    sessionStorage.setItem('jwtToken', token); // Save the token in sessionStorage
-    setAuthenticated(true); // Mark the user as authenticated
-    setLoading(true); // Set loading to true while fetching role
-    // Fetch user details after login
-    const fetchUserRole = async () => {
-      try {
-        const response = await axios.get('http://localhost:3007/user-data', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the request header
-          },
-        });
-        const role = response.data.role; // Assuming 'role' is part of the response
-        setUserRole(role); // Set the user's role
-      } catch (error) {
-        console.error('Error fetching user role:', error);
-        setAuthenticated(false);
-      } finally {
-        setLoading(false); // Set loading to false after fetching
       }
+      setIsLoading(false);
     };
 
-    fetchUserRole();
-  };
+    initializeAuth();
+  }, [dispatch]);
 
   const handleLogout = () => {
-    setAuthenticated(false);
+    dispatch({ type: 'LOGOUT' });
+    sessionStorage.removeItem('jwtToken');
+    sessionStorage.removeItem('isLoggedIn');
     setUserRole(null);
-    sessionStorage.removeItem('jwtToken'); // Clear sessionStorage on logout
   };
 
-  if (loading) {
-    return <div>Loading...</div>; // Display a loading message while fetching role
-  }
+  // Protected Route Component
+  const ProtectedRoute = ({ children }) => {
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />;
+    }
+    return children;
+  };
+
+  // Create a role-based protected route component
+  const RoleProtectedRoute = ({ children, allowedRole }) => {
+    console.log('RoleProtectedRoute Check:', {
+      isAuthenticated,
+      userRole,
+      allowedRole,
+      isLoading,
+      token: !!token
+    });
+
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
+
+    if (!isAuthenticated) {
+      console.log('Not authenticated, redirecting to login');
+      return <Navigate to="/login" />;
+    }
+
+    if (!userRole) {
+      console.log('No role found, redirecting to unauthorized');
+      return <Navigate to="/unauthorized" />;
+    }
+
+    if (userRole !== allowedRole) {
+      console.log(`Unauthorized role: ${userRole}, required: ${allowedRole}`);
+      return <Navigate to="/unauthorized" />;
+    }
+
+    console.log('Access granted for role:', userRole);
+    return children;
+  };
 
   return (
     <BrowserRouter>
-      <CustomNavbar onLogout={handleLogout} />
+      <CustomNavbar 
+        isAuthenticated={isAuthenticated} 
+        onLogout={handleLogout} 
+        userRole={userData?.role} 
+      />
       <div style={{ marginTop: '64px' }}>
         <Routes>
           {/* Public Routes */}
-          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
-          <Route path="/welcome" element={<WelcomePage />} />
-          <Route path="/user-data" element={<UserData />} />
-          <Route path="/test" element={<SomeComponent />} />  
-
-          {/* Public Pages */}
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
           <Route path="/non-teaching" element={<NonTeaching />} />
-          <Route path="/casual-leave" element={<CasualLeaveForm />} />
-          <Route path="/od-leave" element={<ODLeaveForm />} />
-          <Route path="/hpcl-leave" element={<HPCLLeaveForm />} />
-          <Route path="/emp" element={<EmployeeDetails />} />
+          <Route path="/user-data" element={<UserData />} />
+          <Route 
+            path="/login" 
+            element={!isAuthenticated ? <Login /> : <Navigate to="/welcome" replace />} 
+          />
 
-          {/* Protected Role-based Routes */}
+          {/* Protected Routes */}
+          <Route
+            path="/welcome"
+            element={
+              <ProtectedRoute>
+                <WelcomePage />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/test"
+            element={<RoleDisplay />}
+          />
+
+          <Route
+            path="/casual-leave"
+            element={
+              <ProtectedRoute>
+                <CasualLeaveForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/od-leave"
+            element={
+              <ProtectedRoute>
+                <ODLeaveForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/hpcl-leave"
+            element={
+              <ProtectedRoute>
+                <HPCLLeaveForm />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/emp"
+            element={
+              <ProtectedRoute>
+                <EmployeeDetails />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Role-based Routes */}
           <Route
             path="/hod"
             element={
-              authenticated && userRole === 'hod' ? (
+              <RoleProtectedRoute allowedRole="hod">
+                {console.log('Attempting to render HodDashboard')}
                 <HodDashboard />
-              ) : (
-                <Navigate to="/unauthorized" />
-              )
+              </RoleProtectedRoute>
             }
           />
+
           <Route
             path="/principal"
             element={
-              authenticated && userRole === 'principal' ? (
-                <PrincipalDashboard />
-              ) : (
-                <Navigate to="/unauthorized" />
-              )
+              <ProtectedRoute>
+                {userRole === 'principal' ? (
+                  <PrincipalDashboard />
+                ) : (
+                  <Navigate to="/unauthorized" replace />
+                )}
+              </ProtectedRoute>
             }
           />
+
           <Route
             path="/director"
             element={
-              authenticated && userRole === 'director' ? (
-                <DirectorDashboard />
-              ) : (
-                <Navigate to="/unauthorized" />
-              )
+              <ProtectedRoute>
+                {userRole === 'director' ? (
+                  <DirectorDashboard />
+                ) : (
+                  <Navigate to="/unauthorized" replace />
+                )}
+              </ProtectedRoute>
             }
           />
+
+          <Route path="/role" element={<RoleDisplay />} />
 
           {/* Unauthorized Page Route */}
           <Route path="/unauthorized" element={<UnauthorizedPage />} />

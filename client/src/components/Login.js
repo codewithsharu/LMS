@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import axios from 'axios';
+import { setUserData } from '../store/slices/authSlice';
 
 const LoginPage = () => {
   const [empid, setEmpid] = useState('');
@@ -9,6 +11,7 @@ const LoginPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -16,34 +19,29 @@ const LoginPage = () => {
     setLoading(true);
 
     try {
-      // Send the login request with empid and password
       const response = await axios.post('http://localhost:3007/login', { empid, password });
+      console.log('Login Response:', response.data);
 
       if (response.status === 200) {
-        const { token, empId, role, name, branch, employee_type, personalKey } = response.data;
+        const { token } = response.data;
 
-        // Store JWT token and user data in sessionStorage
+        // Store JWT token
         sessionStorage.setItem('jwtToken', token);
-        // sessionStorage.setItem('empid', empId);
-        // sessionStorage.setItem('role', role);
-        // sessionStorage.setItem('name', name);
-        // sessionStorage.setItem('branch', branch);
-        // sessionStorage.setItem('employee_type', employee_type);
-        // sessionStorage.setItem('personalKey', personalKey);
-        sessionStorage.setItem('isLoggedIn', true);
+        sessionStorage.setItem('isLoggedIn', 'true');
 
-        // Clear input fields
+        // Dispatch only the token to Redux
+        dispatch(setUserData({ token }));
+
+        // Debug log
+        console.log('Token stored:', token);
+
         setEmpid('');
         setPassword('');
-
-        // Redirect to the welcome page
         navigate('/welcome');
       }
     } catch (err) {
       const errorMessage = err.response?.data?.message || 'An unexpected error occurred.';
       setError(errorMessage);
-
-      // Clear error after 5 seconds
       setTimeout(() => setError(''), 5000);
     } finally {
       setLoading(false);
