@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import "./HodDashboard.css";
+import "./HODDashboard.css";
 
 const HODDashboard = () => {
   const [applications, setApplications] = useState([]);

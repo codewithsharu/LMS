@@ -2,20 +2,25 @@
 
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchUserData } from '../actions/userActions';
+import { fetchUserData } from '../store/actions/authActions';
 
 const SomeComponent = () => {
   const dispatch = useDispatch();
-  const token = sessionStorage.getItem('jwtToken'); // Retrieve JWT token from session storage
+  const token = sessionStorage.getItem('jwtToken');
 
   // Get user data from Redux store
-  const { name, empId, role, branch, employee_type, personalKey } = useSelector((state) => state.user);
+  const userData = useSelector((state) => state.auth);
+  const { name, empId, role, branch, employee_type, personalKey } = userData || {};
 
   useEffect(() => {
     if (token) {
-      dispatch(fetchUserData(token)); // Fetch user data using the token
+      dispatch(fetchUserData());
     }
-  }, [token, dispatch]);
+  }, [dispatch, token]);
+
+  if (!userData) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
