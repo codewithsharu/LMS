@@ -15,14 +15,20 @@ function CustomNavbar() {
   // Handle logout functionality
   const handleLogout = async () => {
     try {
-      // Make an API call to log out from the backend
-      await axios.post('http://localhost:3007/logout'); // Adjust URL based on your backend endpoint
+      const token = sessionStorage.getItem('jwtToken');
+      // Make an API call to log out from the backend with the token
+      await axios.post('http://localhost:3007/logout', {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
 
       // Clear session data on the frontend
       sessionStorage.clear();
 
-      // Redirect to login page
-      navigate('/login');
+      // Force a reload after navigation to ensure clean state
+      navigate('/login', { replace: true });
+      window.location.reload();
     } catch (error) {
       console.error('Logout failed:', error);
       alert('There was an error logging you out.');

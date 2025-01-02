@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import Typical from 'react-typical';
 import { FaRegCalendarAlt, FaClipboardList, FaCheckCircle } from 'react-icons/fa'; 
 import CalendarModal from './CalendarModal'; 
 import HolidayModal from './HolidayModal'; 
 import { AiOutlineClose } from 'react-icons/ai';
+import { useSelector } from 'react-redux';
+import { getUserDataFromToken } from '../utils/authUtils';
 
 import HPCLLeaveForm from './HPCLLeaveForm';
 import ODLeaveForm from './ODLeaveForm';
@@ -15,6 +17,17 @@ function Home() {
   const [isHolidayOpen, setHolidayOpen] = useState(false);
   const [isTeachingFormVisible, setTeachingFormVisible] = useState(false);
   const navigate = useNavigate(); 
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
+  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) {
+      const data = getUserDataFromToken(token);
+      setUserData(data);
+    }
+    setIsLoading(false);
+  }, [token]);
 
   const openCalendar = () => {
     setCalendarOpen(true);
@@ -51,7 +64,9 @@ function Home() {
   return (
     <div className="home-container">
       <div className="left-content">
-        <h2 className="welcome-text">Welcome to</h2>
+        <h2 className="welcome-text">
+          Welcome {userData?.name || 'to'}
+        </h2>
         <h1 className="typing-text">
           <Typical
             steps={['Leave Management System', 1000, 'Manage Your Leaves with Ease', 1000]}

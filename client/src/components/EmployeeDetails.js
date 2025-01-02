@@ -1,49 +1,67 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { getUserDataFromToken } from '../utils/authUtils';
 import axios from "axios";
-import "./EmployeeDetails.css"; // Link to your CSS file
+import "./EmployeeDetails.css";
 
 const EmployeeDetails = () => {
   const [employee, setEmployee] = useState(null);
   const [error, setError] = useState("");
-  const token = sessionStorage.getItem("jwtToken"); // Retrieve the JWT token
+  const [isLoading, setIsLoading] = useState(false);
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
+  const userData = token ? getUserDataFromToken(token) : null;
 
   useEffect(() => {
+    let isMounted = true;
+
     const fetchEmployeeDetails = async () => {
-      if (!token) {
-        setError("No token found. Please log in.");
+      if (!isAuthenticated || !userData || isLoading) {
         return;
       }
 
+      setIsLoading(true);
       try {
-        // Fetch user data to get empid using the token
-        const response = await axios.get("http://localhost:3007/user-data", {
-          headers: {
-            Authorization: `Bearer ${token}`, // Include the token in the request header
-          },
-        });
-
-        const empid = response.data.empId; // Extract empid from the response
-
-        // Now, make the request with empid in the URL (no token in header)
-        const employeeResponse = await axios.get(`http://localhost:3007/employee/${empid}`);
-        setEmployee(employeeResponse.data); // Set employee data if successful
-        setError(""); // Clear any previous errors
+        const empId = userData.empId;
+        const employeeResponse = await axios.get(`http://localhost:3007/employee/${empId}`);
+        if (isMounted) {
+          setEmployee(employeeResponse.data);
+          setError("");
+        }
       } catch (err) {
-        setError("Employee not found or server error.");
-        setEmployee(null); // Clear employee data in case of an error
+        if (isMounted) {
+          setError("Employee not found or server error.");
+          setEmployee(null);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
-    fetchEmployeeDetails(); // Fetch employee details when the component mounts
-  }, [token]);
+    fetchEmployeeDetails();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [userData?.empId, isAuthenticated]); // Only depend on empId and auth status
+
+  if (!isAuthenticated || !userData) {
+    return (
+      <div className="employee-details-container">
+        <h2>Please log in to view employee details</h2>
+      </div>
+    );
+  }
 
   return (
     <div className="employee-details-container">
       <h1 className="title">Employee Details</h1>
 
+      {isLoading && <p>Loading...</p>}
       {error && <p className="error-message">{error}</p>}
 
-      {employee && (
+      {employee && !isLoading && (
         <div className="employee-info">
           <h2>{employee.name}</h2>
           <p>Employee ID: {employee.empid}</p>

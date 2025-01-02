@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./NonTeaching.css";
 import jsPDF from "jspdf";
 import { useNavigate } from 'react-router-dom'; // Using useNavigate for navigation
+import { useSelector } from 'react-redux'; // Add this import
+import { getUserDataFromToken } from '../utils/authUtils'; // Add this import
 
 const NonTeaching = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -20,35 +22,31 @@ const NonTeaching = () => {
   });
 
   const navigate = useNavigate(); // For redirecting to login page
+  const { token, isAuthenticated } = useSelector((state) => state.auth); // Add this line
 
-  // Check if the user is logged in and populate the form
+  // Update the useEffect to use token data
   useEffect(() => {
-    const loggedIn = sessionStorage.getItem('isLoggedIn');
-    if (!loggedIn) {
-      // Redirect to login page if not logged in
+    if (!isAuthenticated) {
       navigate("/login");
     } else {
-      // Populate form from session data
-      const empId = sessionStorage.getItem('empid');
-      const role = sessionStorage.getItem('role');
-      const name = sessionStorage.getItem('name');
-      const branch = sessionStorage.getItem('branch');
-      
-      setFormData({
-        employeeId: empId,
-        name: name,
-        designation: role, // Role as designation
-        branch: branch, // Ensure this value is set
-        leaveDays: "",
-        leaveStartDate: "",
-        leaveEndDate: "",
-        leaveReasons: "",
-        leaveAddress: "",
-        mobileNumber: "",
-        assignedTo: "",  // Keep this empty initially
-      });
+      const userData = getUserDataFromToken(token);
+      if (userData) {
+        setFormData({
+          employeeId: userData.empId || '',
+          name: userData.name || '',
+          designation: userData.role || '',
+          branch: userData.branch || '',
+          leaveDays: "",
+          leaveStartDate: "",
+          leaveEndDate: "",
+          leaveReasons: "",
+          leaveAddress: "",
+          mobileNumber: "",
+          assignedTo: "",
+        });
+      }
     }
-  }, [navigate]);
+  }, [navigate, token, isAuthenticated]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

@@ -178,9 +178,9 @@ function App() {
           <Route
             path="/emp"
             element={
-              <ProtectedRoute>
+           
                 <EmployeeDetails />
-              </ProtectedRoute>
+             
             }
           />
 
@@ -198,26 +198,20 @@ function App() {
           <Route
             path="/principal"
             element={
-              <ProtectedRoute>
-                {userRole === 'principal' ? (
-                  <PrincipalDashboard />
-                ) : (
-                  <Navigate to="/unauthorized" replace />
-                )}
-              </ProtectedRoute>
+              <RoleProtectedRoute allowedRole="principal">
+                {console.log('Attempting to render PrincipalDashboard')}
+                <PrincipalDashboard />
+              </RoleProtectedRoute>
             }
           />
 
           <Route
             path="/director"
             element={
-              <ProtectedRoute>
-                {userRole === 'director' ? (
-                  <DirectorDashboard />
-                ) : (
-                  <Navigate to="/unauthorized" replace />
-                )}
-              </ProtectedRoute>
+              <RoleProtectedRoute allowedRole="director">
+                {console.log('Attempting to render DirectorDashboard')}
+                <DirectorDashboard />
+              </RoleProtectedRoute>
             }
           />
 
