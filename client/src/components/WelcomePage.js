@@ -17,12 +17,12 @@ const WelcomePage = () => {
     setIsLoading(false);
   }, [token]);
 
-  if (!isAuthenticated || !userData) {
-    return <Navigate to="/login" replace />;
-  }
-
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated || !token) {
+    return <Navigate to="/login" replace />;
   }
 
   return (

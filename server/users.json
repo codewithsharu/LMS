@@ -5,7 +5,7 @@
         "role": "hod",
         "name": "KANCHARI KALIDAS",
         "branch": "MEC",
-        "employee_type": "Non-Teaching",
+        "employee_type": "Teaching",
         "personalKey": "hodKey"
     },
     {
@@ -14,7 +14,7 @@
         "role": "principal",
         "name": "V ESWARA RAO",
         "branch": "MEC",
-        "employee_type": "Non-Teaching",
+        "employee_type": "Teaching",
         "personalKey": "principalKey"
     },
     {
@@ -27,8 +27,8 @@
         "personalKey": "direct1orKey"
     },
     {
-        "empId": "E003",
-        "password": "password789",
+        "empId": "3",
+        "password": "3",
         "role": "Intern",
         "name": "Charlie Brown",
         "branch": "Computer Science",
