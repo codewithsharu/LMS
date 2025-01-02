@@ -65,7 +65,11 @@ function Home() {
     <div className="home-container">
       <div className="left-content">
         <h2 className="welcome-text">
-          Welcome {userData?.name || 'to'}
+          {isAuthenticated && userData ? (
+            `Welcome, ${userData.name}!`
+          ) : (
+            'Welcome to'
+          )}
         </h2>
         <h1 className="typing-text">
           <Typical
