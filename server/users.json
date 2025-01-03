@@ -38,7 +38,7 @@
     {
         "empId": "A50ME0NT06",
         "password": "1",
-        "role": "Principal",
+        "role": "attender",
         "name": "Diana Prince",
         "branch": "MEC",
         "employee_type": "Non-Teaching",

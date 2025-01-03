@@ -67,8 +67,8 @@ const EmployeeDataSchema = new mongoose.Schema({
         assigned_on_duty_from: { type: Date },
         assigned_on_duty_to: { type: Date },
         purpose_of_duty: { type: String },
-        assigned_to: { type: String },
-        assigned_to_empid: { type: String }
+        assigned_by: { type: String },
+        assigned_by_empid: { type: String }
     }],
     
     duties_taken_over: [{
