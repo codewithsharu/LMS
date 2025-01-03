@@ -10,6 +10,10 @@ const EmployeeDataSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    available_leaves: {
+        type: Number,
+        default: 15
+    },
     role: {
         type: String,
         required: true
@@ -31,10 +35,6 @@ const EmployeeDataSchema = new mongoose.Schema({
         default: 0
     },
     extra_leaves: {
-        type: Number,
-        default: 0
-    },
-    available_leaves: {
         type: Number,
         default: 0
     },

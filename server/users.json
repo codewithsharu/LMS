@@ -36,12 +36,12 @@
         "personalKey": "CK-004"
     },
     {
-        "empId": "E004",
-        "password": "password101",
+        "empId": "A50ME0NT06",
+        "password": "1",
         "role": "Principal",
         "name": "Diana Prince",
-        "branch": "Administration",
-        "employee_type": "Teaching",
+        "branch": "MEC",
+        "employee_type": "Non-Teaching",
         "personalKey": "CK-005"
     },
     {

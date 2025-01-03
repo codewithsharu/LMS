@@ -6,12 +6,15 @@ const DirectorDashboard = () => {
     const [applications, setApplications] = useState([]);
     const [selectedApplicationId, setSelectedApplicationId] = useState(null);
     const [rejectionMessage, setRejectionMessage] = useState('');
+    const token = sessionStorage.getItem('jwtToken');
 
     // Fetch leave applications assigned to Director
     useEffect(() => {
         const fetchApplications = async () => {
             try {
                 const response = await axios.get('http://localhost:3007/api/director-applications');
+
+                console.log('Director Applications:', response.data);
                 setApplications(response.data);
             } catch (error) {
                 console.error('Failed to fetch applications:', error);
@@ -47,14 +50,27 @@ const DirectorDashboard = () => {
     // Function to approve an application
     const handleApprove = async (employeeId) => {
         try {
-            const response = await axios.post(`http://localhost:3007/api/approve-director-leave/${employeeId}`);
+            const response = await axios.post(
+                `http://localhost:3007/approve-leave/${employeeId}`,
+                {},  // Empty body since backend doesn't require additional data
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
 
-            // Update the application state after approval
-            setApplications(applications.map(app =>
-                app.employeeId === employeeId ? response.data : app
-            ));
-        } catch (error) {
-            console.error('Failed to approve application:', error);
+            if (response.data.message === 'Leave approved and updated successfully') {
+                // Remove the approved application from the list
+                setApplications(prevApplications => 
+                    prevApplications.filter(app => app.employeeId !== employeeId)
+                );
+            } else {
+                alert('Something went wrong with the approval');
+            }
+        } catch (err) {
+            console.error('Failed to approve application:', err);
+            alert('Failed to approve application. Please try again.');
         }
     };
 
@@ -82,7 +98,7 @@ const DirectorDashboard = () => {
                             <tr key={application._id}>
                                 <td>{application.name}</td>
                                 <td>{application.designation}</td>
-                                <td>{application.department}</td>
+                                <td>{application.branch}</td>
                                 <td>{application.leaveDays}</td>
                                 <td>{application.leaveReasons}</td>
                                 <td>{application.directorApproval?.status || 'Pending'}</td>

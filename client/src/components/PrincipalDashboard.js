@@ -6,7 +6,7 @@ const PrincipalDashboard = () => {
     const [applications, setApplications] = useState([]);
     const [selectedApplicationId, setSelectedApplicationId] = useState(null);
     const [rejectionMessage, setRejectionMessage] = useState('');
-
+    const token = sessionStorage.getItem('jwtToken');
 
     // Fetch leave applications assigned to Principal
     useEffect(() => {
@@ -47,7 +47,29 @@ const PrincipalDashboard = () => {
 
     // Function to approve an application (not implemented here)
     const handleApprove = async (employeeId) => {
-        // Add your logic for approving an application here
+        try {
+            const response = await axios.post(
+                `http://localhost:3007/approve-leave/${employeeId}`,
+                {},
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    }
+                }
+            );
+
+            if (response.data.message === 'Leave approved and updated successfully') {
+                // Remove the approved application from the list
+                setApplications(prevApplications => 
+                    prevApplications.filter(app => app.employeeId !== employeeId)
+                );
+            } else {
+                alert('Something went wrong with the approval');
+            }
+        } catch (err) {
+            console.error('Failed to approve application:', err);
+            alert('Failed to approve application. Please try again.');
+        }
     };
 
     // Function to forward an application to Director

@@ -258,6 +258,10 @@ const calculateMonth = (date) => {
 
 // Approve leave API
 app.post('/approve-leave/:employeeId', async (req, res) => {
+
+   
+    console.log("Approving leave");
+    console.log(req.body);
     try {
         const employeeId = req.params.employeeId; // Fetch the employee ID from the request parameters
         const leaveRequest = await Applied.findOne({ employeeId }); // Fetch the leave request by employeeId
@@ -352,7 +356,7 @@ app.post('/approve-leave/:employeeId', async (req, res) => {
             employeeId: leaveRequest.employeeId,
             name: leaveRequest.name,  // Include name
             designation: leaveRequest.designation,  // Include designation
-            department: leaveRequest.department,  // Include department
+            department: leaveRequest.branch,  // Include department
             leaveDays: leaveRequest.leaveDays,
             leaveStartDate: leaveRequest.leaveStartDate,
             leaveEndDate: leaveRequest.leaveEndDate,
@@ -545,7 +549,7 @@ app.post('/api/forward-principal-leave/:employeeId', async (req, res) => {
 
 app.get('/api/director-applications', async (req, res) => {
     try {
-        const applications = await Applied.find({ assignedTo: 'Director' });
+        const applications = await Applied.find({ assignedTo: 'DIRECTOR' });
         res.json(applications);
     } catch (error) {
         console.error('Error fetching applications:', error);

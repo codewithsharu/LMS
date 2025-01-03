@@ -256,7 +256,7 @@ const NonTeaching = () => {
           >
             <option value="">Select Authority</option>
             <option value="HOD">HOD</option>
-            <option value="PRINCIPAL">Principal</option>
+            <option value="Principal">Principal</option>
             <option value="DIRECTOR">Director</option>
           </select>
         </label>
