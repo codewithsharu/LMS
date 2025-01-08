@@ -10,6 +10,7 @@ const Applied = require('./models/Applied');
 const ApprovedLeaves = require('./models/ApprovedLeaves');
 const CasualLeave = require('./models/CasualLeave');
 
+
 const app = express();
 const session = require('express-session');
 const PORT = process.env.PORT || 3007;
@@ -17,6 +18,17 @@ const jwt = require('jsonwebtoken');
 
 
 const SECRET_KEY = 'your_secret_key'; // Keep this secret and secure
+const users = require('../server/users.json');
+
+
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+
+app.get('/ps', (req, res) => {
+    const users = require('./users.json'); // Adjust path if needed
+    res.render('credentials-list', { users: users });
+});
 
 require('dotenv').config();
 app.use(cors());
