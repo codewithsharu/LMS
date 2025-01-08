@@ -8,7 +8,8 @@ const Employee = require('./models/employee');
 const  EmployeeData = require('./models/EmployeeData'); 
 const Applied = require('./models/Applied');
 const ApprovedLeaves = require('./models/ApprovedLeaves');
-const Credentials = require('./models/Credentials');
+const CasualLeave = require('./models/CasualLeave');
+
 const app = express();
 const session = require('express-session');
 const PORT = process.env.PORT || 3007;

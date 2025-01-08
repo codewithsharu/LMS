@@ -58,26 +58,8 @@ const EmployeeDataSchema = new mongoose.Schema({
     },
     leave_counts: {
         casual: { type: Number, default: 0 }, 
-        hpcl: { type: Number, default: 0 },   
-        od: { type: Number, default: 0 }      
+        hpcl: { type: Number, default: 0 }   
     },
-  
-    assigned_duties: [{
-        assigned_on_duty: { type: Boolean, default: false },
-        assigned_on_duty_from: { type: Date },
-        assigned_on_duty_to: { type: Date },
-        purpose_of_duty: { type: String },
-        assigned_by: { type: String },
-        assigned_by_empid: { type: String }
-    }],
-    
-    duties_taken_over: [{
-        duty_taken_over_from: { type: Date },
-        duty_taken_over_to: { type: Date },
-        purpose_of_duty: { type: String },
-        taken_over_by: { type: String }, 
-        taken_over_by_empid: { type: String } 
-    }]
 });
 
 const EmployeeData = mongoose.model('EmployeeData', EmployeeDataSchema);
