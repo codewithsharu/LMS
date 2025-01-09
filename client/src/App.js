@@ -8,7 +8,7 @@ import { getUserDataFromToken } from './utils/authUtils';
 import Contact from './components/Contact';
 import About from './components/About';
 import Home from './components/Home';
-import NonTeaching from './components/NonTeaching';
+import CL from './components/cl';
 import CasualLeaveForm from './components/CasualLeaveForm';
 import ODLeaveForm from './components/ODLeaveForm';
 import HPCLLeaveForm from './components/HPCLLeaveForm';
@@ -126,7 +126,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/about" element={<About />} />
-          <Route path="/non-teaching" element={<NonTeaching />} />
+          <Route path="/cl" element={<CL />} />
           <Route path="/user-data" element={<UserData />} />
           <Route 
             path="/login" 

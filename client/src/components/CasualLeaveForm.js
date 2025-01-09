@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./NonTeaching.css";
 import jsPDF from "jspdf";
-import logo from './images/log.jpeg';
+
 
 function CasualLeaveForm() {
   const [applicantSignature, setApplicantSignature] = useState("");

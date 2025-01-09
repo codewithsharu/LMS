@@ -1,61 +1,71 @@
 import React, { useState, useEffect } from "react";
 import "./NonTeaching.css";
 import jsPDF from "jspdf";
-import { useNavigate } from 'react-router-dom'; // Using useNavigate for navigation
-import { useSelector } from 'react-redux'; // Add this import
-import { getUserDataFromToken } from '../utils/authUtils'; // Add this import
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getUserDataFromToken } from '../utils/authUtils';
 
-const NonTeaching = () => {
+const LeaveApplicationForm = () => {
+  const location = useLocation();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     employeeId: "",
     name: "",
     designation: "",
-    branch: "", // Make sure this field is part of the form data
+    branch: "",
     leaveDays: "",
     leaveStartDate: "",
     leaveEndDate: "",
     leaveReasons: "",
     leaveAddress: "",
     mobileNumber: "",
-    assignedTo: "",  // New field for "Apply To"
+    assignedTo: "",
+    employeeType: "nonteaching",
+    leaveType: location.pathname === '/cl' ? 'casual' : 'hpcl',
+    halfDaySession: "",
+    adjustedToEmpId: "",
   });
 
-  const navigate = useNavigate(); // For redirecting to login page
-  const { token, isAuthenticated } = useSelector((state) => state.auth); // Add this line
+  const navigate = useNavigate();
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
 
-  // Update the useEffect to use token data
   useEffect(() => {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
       const userData = getUserDataFromToken(token);
       if (userData) {
-        setFormData({
+        setFormData(prev => ({
+          ...prev,
           employeeId: userData.empId || '',
           name: userData.name || '',
           designation: userData.role || '',
           branch: userData.branch || '',
-          leaveDays: "",
-          leaveStartDate: "",
-          leaveEndDate: "",
-          leaveReasons: "",
-          leaveAddress: "",
-          mobileNumber: "",
-          assignedTo: "",
-        });
+          leaveType: location.pathname === '/cl' ? 'casual' : 'hpcl',
+        }));
       }
     }
-  }, [navigate, token, isAuthenticated]);
+  }, [navigate, token, isAuthenticated, location.pathname]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     
-    // Update form data
-    setFormData((prevData) => {
-      const updatedData = { ...prevData, [name]: value };
-      return updatedData;
-    });
+    if (name.startsWith('adjustedTo[')) {
+      setFormData(prevData => ({
+        ...prevData,
+        adjustedTo: [
+          {
+            ...prevData.adjustedTo[0],
+            employeeId: value
+          }
+        ]
+      }));
+    } else {
+      setFormData(prevData => ({
+        ...prevData,
+        [name]: value
+      }));
+    }
   };
 
   // Effect to calculate leave days whenever the start or end date changes
@@ -132,8 +142,11 @@ const NonTeaching = () => {
 
   return (
     <div className="non-teaching-form">
-      <h1 className="head">Leave Application for Non-Teaching Staff</h1>
-      <form>
+      <div className="leave-type-indicator">
+        Current Leave Type: {formData.leaveType === 'casual' ? 'Casual Leave' : 'Half Pay Commuted Leave'}
+      </div>
+
+      <form onSubmit={handleSubmit}>
         <label>
           Employee ID:
           <input
@@ -261,15 +274,29 @@ const NonTeaching = () => {
           </select>
         </label>
 
-        <button
-          type="button"
-          className="generate-pdf-button"
-          onClick={downloadPDF}
-        >
-          Generate PDF
-        </button>
-        <button type="button" onClick={handleSubmit} className="submit-button">
-          Submit 
+      
+        <input
+         
+          name="leaveType"
+          value={formData.leaveType}
+        />
+
+        <div className="adjustment-section">
+          <label>
+            Adjusted To (Employee ID):
+            <input
+              type="text"
+              name="adjustedToEmpId"
+              value={formData.adjustedToEmpId}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter employee ID for adjustment"
+            />
+          </label>
+        </div>
+
+        <button type="submit" className="submit-button">
+          Submit
         </button>
       </form>
       {isSubmitted && <p>Form submitted successfully!</p>}
@@ -277,4 +304,4 @@ const NonTeaching = () => {
   );
 }
 
-export default NonTeaching;
+export default LeaveApplicationForm;

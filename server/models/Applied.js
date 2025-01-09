@@ -26,13 +26,7 @@ const AppliedSchema = new mongoose.Schema({
         status: { type: String, enum: ['Pending', 'Approved', 'Rejected'], default: 'Pending' },
         message: { type: String, default: '' }
     },
-    adjustedTo: [{
-        employeeId: { type: String, required: true },
-        name: { type: String, required: true },
-        designation: { type: String, required: true },
-        adjustmentDetails: { type: String, required: true },
-        date: { type: Date, default: Date.now }
-    }],
+   
     adjustmentStatus: {
         type: String,
         enum: ['pending', 'partially_adjusted', 'fully_adjusted'],
@@ -57,6 +51,10 @@ const AppliedSchema = new mongoose.Schema({
             // Check if leaveDays has a .5 component
             return this.leaveDays % 1 !== 0;
         }
+    },
+    adjustedToEmpId: { 
+        type: String, 
+        required: true 
     },
 });
 

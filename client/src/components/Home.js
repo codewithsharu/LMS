@@ -185,7 +185,7 @@ function Home() {
             </button>
             <h2 className="form-title">Select Leave Type</h2>
             <div className="leave-types">
-              <button className="leave-button" onClick={() => navigate('/non-teaching')}>Casual Leaves</button>
+              <button className="leave-button" onClick={() => navigate('/cl')}>Casual Leaves</button>
               <button className="leave-button" onClick={() => navigate('/hpcl-leave')}>HPCL's</button>
             </div>
           </div>

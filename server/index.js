@@ -8,7 +8,7 @@ const Employee = require('./models/employee');
 const  EmployeeData = require('./models/EmployeeData'); 
 const Applied = require('./models/Applied');
 const ApprovedLeaves = require('./models/ApprovedLeaves');
-const CasualLeave = require('./models/CasualLeave');
+
 
 
 const app = express();
@@ -215,28 +215,71 @@ app.get('/upnt', async (req, res) => {
 
 app.post('/submit-application', async (req, res) => {
     try {
-        const formData = req.body;
+        console.log('=== Received Form Data ===');
+        console.log(JSON.stringify(req.body, null, 2));
 
-     
-        const newApplication = new Applied({
-            employeeId: formData.employeeId,
-            name: formData.name,
-            designation: formData.designation,
-            branch: formData.branch,
-            leaveDays: formData.leaveDays,
-            leaveStartDate: formData.leaveStartDate,
-            leaveEndDate: formData.leaveEndDate,
-            leaveReasons: formData.leaveReasons,
-            leaveAddress: formData.leaveAddress,
-            mobileNumber: formData.mobileNumber,
-            assignedTo: formData.assignedTo  
+        const { leaveType, numberOfHPCL, halfDaySession } = req.body;
+        const daysNumber = Number(numberOfHPCL);
+
+        // Base application data
+        const applicationData = {
+            employeeId: req.body.employeeId,
+            name: req.body.name,
+            designation: req.body.designation,
+            branch: req.body.branch,
+            leaveDays: daysNumber,
+            leaveStartDate: req.body.leaveStartDate,
+            leaveEndDate: req.body.leaveStartDate,
+            leaveReasons: req.body.leaveReasons,
+            leaveAddress: req.body.leaveAddress,
+            mobileNumber: req.body.mobileNumber,
+            assignedTo: req.body.assignedTo,
+            employeeType: req.body.employeeType,
+            leaveType: leaveType,
+            adjustedToEmpId: req.body.adjustedToEmpId,
+            adjustmentStatus: 'pending'
+        };
+
+        // Special handling for HPCL
+        if (leaveType === 'hpcl') {
+            // Check if number of days is odd
+            const isOddDays = daysNumber % 2 !== 0;
+            
+            if (isOddDays) {
+                if (!halfDaySession || !['AM', 'PM'].includes(halfDaySession)) {
+                    return res.status(400).json({
+                        error: 'Please select a valid session (AM/PM) for odd number of days'
+                    });
+                }
+                applicationData.halfDaySession = halfDaySession;
+                console.log(`Odd days (${daysNumber}): Session ${halfDaySession} will be recorded`);
+            } else {
+                // For even number of days, don't include session
+                applicationData.halfDaySession = undefined;
+                console.log(`Even days (${daysNumber}): No session needed`);
+            }
+
+            console.log('=== HPCL Application Data ===');
+            console.log(JSON.stringify(applicationData, null, 2));
+        }
+
+        const newApplication = new Applied(applicationData);
+        const savedApplication = await newApplication.save();
+
+        console.log('=== Saved Application ===');
+        console.log(JSON.stringify(savedApplication.toObject(), null, 2));
+
+        res.status(201).json({
+            message: `${leaveType.toUpperCase()} application submitted successfully!`,
+            application: savedApplication
         });
 
-        await newApplication.save();
-        res.status(201).json({ message: 'Application submitted successfully!' });
     } catch (error) {
-        console.error('Error submitting application:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error details:', error);
+        res.status(500).json({
+            error: 'Failed to submit application',
+            details: error.message
+        });
     }
 });
 

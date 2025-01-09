@@ -1,212 +1,145 @@
-import React, { useState } from "react";
-import "./HPCLLeaveForm.css";
+import React, { useState, useEffect } from "react";
+import "./NonTeaching.css";
 import jsPDF from "jspdf";
-import logo from './images/log.jpeg';
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { getUserDataFromToken } from '../utils/authUtils';
 
-function HPCLLeaveForm() {
+const HPCLApplicationForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [formData, setFormData] = useState({
     employeeId: "",
     name: "",
     designation: "",
-    department: "",
-    availableLeaves: 20,
-    leaveDays: "",
+    branch: "",
+    numberOfHPCL: "",
     leaveStartDate: "",
-    leaveEndDate: "",
-    leavesAvailed: 1,
-    balanceLeave: 0,
+    halfDaySession: "", // AM or PM for half day
     leaveReasons: "",
     leaveAddress: "",
     mobileNumber: "",
+    assignedTo: "",
+    employeeType: "nonteaching",
+    leaveType: "hpcl",
+    adjustedToEmpId: "",
   });
+
+  const navigate = useNavigate();
+  const { token, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+    } else {
+      const userData = getUserDataFromToken(token);
+      if (userData) {
+        setFormData(prev => ({
+          ...prev,
+          employeeId: userData.empId || '',
+          name: userData.name || '',
+          designation: userData.role || '',
+          branch: userData.branch || '',
+        }));
+      }
+    }
+  }, [navigate, token, isAuthenticated]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-    if (name === "leaveDays") {
-      const leaveDaysValue = Number(value);
-
-      if (leaveDaysValue > 1) {
-        alert("More than 1 leave will result in pay off cutting");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    try {
+      // Convert numberOfHPCL to a number
+      const numberOfHPCL = Number(formData.numberOfHPCL);
+      
+      // Check if it's a half day (1)
+      if (numberOfHPCL === 1 && !formData.halfDaySession) {
+        alert('Please select AM or PM session for the leave');
+        return;
       }
 
-      const balanceLeave = formData.availableLeaves - leaveDaysValue;
+      const submissionData = {
+        ...formData,
+        leaveEndDate: formData.leaveStartDate,
+        leaveDays: numberOfHPCL,
+        halfDaySession: formData.halfDaySession
+      };
 
-      setFormData((prevData) => ({
-        ...prevData,
-        leaveDays: leaveDaysValue,
-        balanceLeave: balanceLeave,
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
+      const response = await fetch('http://localhost:3007/submit-application', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(submissionData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Success:', data.message);
+        setIsSubmitted(true);
+      } else {
+        const errorData = await response.json();
+        alert(errorData.error || 'Failed to submit application');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to submit application');
     }
-  };
-
-  const downloadPDF = () => {
-    const doc = new jsPDF();
-  
-   
-    doc.setFillColor(255, 255, 255); 
-    doc.rect(0, 0, doc.internal.pageSize.width, doc.internal.pageSize.height, "F");
-  
-    
-    doc.addImage(logo, 'JPEG', 10, 10, 20, 20); 
-  
-  
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("ADITYA INSTITUTE OF TECHNOLOGY AND MANAGEMENT", 105, 15, { align: "center" });
-  
-    doc.setFontSize(10);
-    doc.text("K.KOTTURU, TEKKALI, SRIKAKULAM DIST.", 105, 25, { align: "center" });
-    doc.text("PH : 08945-2452666 & 245666", 105, 32, { align: "center" });
-  
-    doc.setLineWidth(0.5);
-    doc.line(20, 38, 190, 38);
-  
-    doc.setFontSize(12);
-    doc.text("APPLICATION FOR CASUAL LEAVE / TEACHING", 20, 50);
-    doc.line(20, 55, 190, 55);
-  
-    const fields = [
-      { label: "Employee ID :", value: formData.employeeId },
-      { label: "Name:", value: formData.name },
-      { label: "Designation:", value: formData.designation },
-      { label: "Department:", value: formData.department },
-      { label: "Available Leaves:", value: String(formData.availableLeaves) }, 
-      { label: "Leave required (days):", value: String(formData.leaveDays) }, 
-      { label: "From:", value: formData.leaveStartDate },
-      { label: "To:", value: formData.leaveEndDate },
-      { label: "Leaves availed this month:", value: String(formData.leavesAvailed) }, 
-      { label: "Balance Leaves:", value: String(formData.balanceLeave) }, 
-      { label: "Reasons for leave:", value: formData.leaveReasons },
-      { label: "Leave address:", value: formData.leaveAddress },
-      { label: "Mobile No:", value: formData.mobileNumber },
-      { label: "Sanctioned/Not Sanctioned:", value: "  ___________________" },
-      { label: "Signature of Applicant:", value: "  ___________________" },
-      { label: "Principal / Director Signature:", value: "   ___________________" },
-    ];
-  
-    const fieldStartY = 65; 
-    const lineHeight = 10; 
-  
-    fields.forEach((field, index) => {
-      doc.setFontSize(10);
-      doc.text(field.label, 20, fieldStartY + index * lineHeight);
-      doc.text(field.value, 100, fieldStartY + index * lineHeight);
-    });
-  
-  
-    doc.save("Teaching_Leave_Application.pdf");
-    setIsSubmitted(true);
-  };
-  
-
-  const handleSubmit = () => {
-    setIsSubmitted(true);
   };
 
   return (
     <div className="non-teaching-form">
-      <h1 className="head">Leave Application for Teaching Staff (HPCL'S)</h1>
-      <form>
+      <h1 className="head">HPCL Application Form</h1>
+      <form onSubmit={handleSubmit}>
         <label>
           Employee ID:
           <input
             type="text"
             name="employeeId"
             value={formData.employeeId}
-            onChange={handleInputChange}
-            required
+            readOnly
           />
         </label>
-        
-        <label>Name:
+
+        <label>
+          Name:
           <input
             type="text"
             name="name"
             value={formData.name}
-            onChange={handleInputChange} 
-            required
+            readOnly
           />
         </label>
 
         <label>
           Designation:
-          <select
-            name="designation"
-            value={formData.designation}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Select</option>
-            <option value="hodcsE">HOD-CSE</option>
-            <option value="hodcsm">HOD-CSM</option>
-            <option value="hodcsd">HOD-CSD</option>
-            <option value="hodit">HOD-IT</option>
-            <option value="hodece">HOD-ECE</option>
-            <option value="hodeee">HOD-EEE</option>
-            <option value="hodmech">HOD-MECH</option>
-            <option value="hodcivil">HOD-CIVIL</option>
-            <option value="hoddiploma">HOD-DIPLOMA</option>
-            <option value="hodmtech">HOD-MTECH</option>
-            <option value="hodmba">HOD-MBA</option>
-            <option value="hodmca">HOD-MCA</option>
-            <option value="hodbsh">HOD-BS&H</option>
-            <option value="professor">Professor</option>
-            <option value="teacher">Teacher</option>
-          </select>
-        </label>
-
-        <label>
-          Department:
-          <select
-            name="department"
-            value={formData.department}
-            onChange={handleInputChange}
-            required
-          >
-            <option value="">Select Department</option>
-            <option value="CSE">CSE</option>
-            <option value="CSM">CSM</option>
-            <option value="CSD">CSD</option>
-            <option value="IT">IT</option>
-            <option value="ECE">ECE</option>
-            <option value="EEE">EEE</option>
-            <option value="CIVIL">CIVIL</option>
-            <option value="MECH">MECH</option>
-            <option value="M-TECH">M-TECH</option>
-            <option value="MBA">MBA</option>
-            <option value="MCA">MCA</option>
-            <option value="DIPLOMA">DIPLOMA</option>
-          </select>
-        </label>
-
-        <label>Available HPCL Leaves:
           <input
             type="text"
-            name="availableLeaves"
-            value={formData.availableLeaves}
+            name="designation"
+            value={formData.designation}
             readOnly
           />
         </label>
-        
-        <label>Leave required (days):
+
+        <label>
+          Branch:
           <input
-            type="number"
-            name="leaveDays"
-            value={formData.leaveDays}
-            onChange={handleInputChange}
-            required
+            type="text"
+            name="branch"
+            value={formData.branch}
+            readOnly
           />
         </label>
-        
-        <label>From:
+
+        <label>
+          Start Date:
           <input
             type="date"
             name="leaveStartDate"
@@ -215,50 +148,46 @@ function HPCLLeaveForm() {
             required
           />
         </label>
-        
-        <label>To:
+
+        <label>
+          Number of HPCL Days:
           <input
-            type="date"
-            name="leaveEndDate"
-            value={formData.leaveEndDate}
+            type="number"
+            name="numberOfHPCL"
+            value={formData.numberOfHPCL}
             onChange={handleInputChange}
+            min="1"
+            step="1"
             required
           />
         </label>
-        
-        <div>
-          <label>Leaves availed this month:</label>
-          <input
-            type="number"
-            name="leavesAvailed"
-            value={formData.leavesAvailed}
+
+        <label>
+          Session:
+          <select
+            name="halfDaySession"
+            value={formData.halfDaySession}
             onChange={handleInputChange}
-          />
-        </div>
-        
-        <div>
-          <label>Balance Leaves:</label>
-          <input
-            type="number"
-            name="balanceLeave"
-            value={formData.balanceLeave}
-            readOnly
-          />
-        </div>
-        
-        <div>
-          <label>Reasons for leave:</label>
-          <input
-            type="text"
+            required
+          >
+            <option value="">Select Session</option>
+            <option value="AM">Morning (AM)</option>
+            <option value="PM">Afternoon (PM)</option>
+          </select>
+        </label>
+
+        <label>
+          Reasons for leave:
+          <textarea
             name="leaveReasons"
             value={formData.leaveReasons}
             onChange={handleInputChange}
             required
-          />
-        </div>
-        
-        <div>
-          <label>Leave address:</label>
+          ></textarea>
+        </label>
+
+        <label>
+          Leave Address:
           <input
             type="text"
             name="leaveAddress"
@@ -266,27 +195,53 @@ function HPCLLeaveForm() {
             onChange={handleInputChange}
             required
           />
-        </div>
-        
-        <div>
-          <label>Mobile No:</label>
+        </label>
+
+        <label>
+          Mobile No.:
           <input
-            type="text"
+            type="tel"
             name="mobileNumber"
             value={formData.mobileNumber}
             onChange={handleInputChange}
             required
           />
+        </label>
+
+        <label>
+          Apply to:
+          <select
+            name="assignedTo"
+            value={formData.assignedTo}
+            onChange={handleInputChange}
+            required
+          >
+            <option value="">Select Authority</option>
+            <option value="HOD">HOD</option>
+            <option value="Principal">Principal</option>
+            <option value="DIRECTOR">Director</option>
+          </select>
+        </label>
+
+        <div className="adjustment-section">
+          <label>
+            Adjusted To (Employee ID):
+            <input
+              type="text"
+              name="adjustedToEmpId"
+              value={formData.adjustedToEmpId}
+              onChange={handleInputChange}
+              required
+              placeholder="Enter employee ID for adjustment"
+            />
+          </label>
         </div>
-        <button type="button" className="sub" onClick={downloadPDF} >
-          Download PDF
-        </button>
-        
-        <button type="button" onClick={handleSubmit} className="submit-button">Submit Successfully</button>
-        {isSubmitted && <p>Your leave application has been submitted!</p>}
+
+        <button type="submit">Submit</button>
       </form>
+      {isSubmitted && <p>Form submitted successfully!</p>}
     </div>
   );
-}
+};
 
-export default HPCLLeaveForm;
+export default HPCLApplicationForm;
